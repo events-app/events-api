@@ -7,3 +7,6 @@
 main
 debug
 debug.log
+
+.env
+.docker_build/

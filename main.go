@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 	http.HandleFunc("/", Info)
 	http.HandleFunc("/api/v1/content/main/", MainContent)
-	log.Println("Listening on port 8000")
-	if err := http.ListenAndServe(":8000", nil); err != nil {
+	log.Println("Listening on port", os.Getenv("PORT"))
+	if err := http.ListenAndServe(":"+os.Getenv("PORT"), nil); err != nil {
 		log.Printf("error: listing and serving: %s", err)
 		return
 	}
@@ -23,7 +24,7 @@ type Content struct {
 }
 
 func Info(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "GET: %s/api/v1/content/main/\n", r.Host)
+	fmt.Fprintf(w, "GET: https://%s/api/v1/content/main/\n", r.Host)
 }
 
 func MainContent(w http.ResponseWriter, r *http.Request) {
