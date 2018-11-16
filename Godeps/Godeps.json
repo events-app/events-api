@@ -2,5 +2,25 @@
 	"ImportPath": "github.com/events-app/events-api",
 	"GoVersion": "go1.11",
 	"GodepVersion": "v80",
-	"Deps": []
+	"Deps": [
+		{
+			"ImportPath": "github.com/auth0/go-jwt-middleware",
+			"Rev": "5493cabe49f7bfa6e2ec444a09d334d90cd4e2bd"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v1.0.0-16-g0af0d91",
+			"Rev": "0af0d913cfc4cc6c389cc402eb70bf8a8fec374d"
+		},
+		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.2.0-4-g3af4c74",
+			"Rev": "3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.6.2-11-g521ea7b",
+			"Rev": "521ea7b17d02faf8d3afea6737573942ceac59c5"
+		}
+	]
 }
