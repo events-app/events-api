@@ -98,7 +98,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		RespondJSON(true, "Could not decode response", w)
 		return
 	}
-	if ValidateUsername(user.Username) {
+	if !ValidateUsername(user.Username) {
 		RespondJSON(true, "Username is invalid", w)
 		return
 	}
@@ -117,6 +117,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		RespondJSON(true, err.Error(), w)
 		return
 	}
-	json.NewEncoder(w).Encode(JwtToken{Token: tokenString})
-
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	json.NewEncoder(w).Encode(
+		JwtToken{
+			Token:   tokenString,
+			Expires: expireToken,
+		})
 }
