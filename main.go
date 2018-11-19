@@ -98,8 +98,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		RespondJSON(true, "Could not decode response", w)
 		return
 	}
+	if ValidateUsername(user.Username) {
+		RespondJSON(true, "Username is invalid", w)
+		return
+	}
 	if user.Username != "admin" || user.Password != "admin" {
-		RespondJSON(true, "User or password is invalid", w)
+		RespondJSON(true, "Username or password is invalid", w)
 		return
 	}
 	// set token expiration to 15 minutes
