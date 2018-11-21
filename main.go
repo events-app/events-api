@@ -27,12 +27,15 @@ func main() {
 	})
 
 	r.HandleFunc("/", Info).Methods("GET")
-	r.HandleFunc("/api/v1/content/main", MainContent).Methods("GET")
 	r.Handle("/api/v1/content/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(SecuredContent)),
 	)).Methods("GET")
+	r.HandleFunc("/api/v1/content/{name}", GetContent).Methods("GET")
+	r.HandleFunc("/api/v1/content", GetCards).Methods("GET")
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
+	r.HandleFunc("/api/v1/content", AddContent).Methods("POST")
+	r.HandleFunc("/api/v1/content/{name}", UpdateContent).Methods("PUT")
 
 	port := os.Getenv("PORT")
 	if port == "" {

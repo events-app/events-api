@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
+
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
@@ -14,15 +16,6 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "GET: https://%s/api/v1/content/main\n", r.Host)
 	fmt.Fprintf(w, "GET: https://%s/api/v1/content/secured, Bearer authorization\n", r.Host)
 	fmt.Fprintf(w, "POST: https://%s/api/v1/content/login, Body: {\"username\":\"...\", \"password\":\"...\"}\n", r.Host)
-}
-
-func MainContent(w http.ResponseWriter, r *http.Request) {
-	content := Find("main")
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	if err := json.NewEncoder(w).Encode(content); err != nil {
-		log.Printf("error: encoding response: %s", err)
-	}
 }
 
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
@@ -67,4 +60,59 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			Token:   tokenString,
 			Expires: expireToken,
 		})
+}
+
+func GetContent(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	content := Find(name)
+	if content == nil {
+		RespondJSON(true, name+" does not exist", w)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if err := json.NewEncoder(w).Encode(&content); err != nil {
+		log.Printf("error: encoding response: %s", err)
+	}
+}
+
+func GetCards(w http.ResponseWriter, r *http.Request) {
+	cards := GetAll()
+	if cards == nil {
+		RespondJSON(true, "no cards in database", w)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	if err := json.NewEncoder(w).Encode(&cards); err != nil {
+		log.Printf("error: encoding response: %s", err)
+	}
+}
+
+func AddContent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	var content Content
+	err := json.NewDecoder(r.Body).Decode(&content)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	Add(content.Name, content.Text)
+}
+
+func UpdateContent(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	params := mux.Vars(r)
+	name := params["name"]
+	var content Content
+	err := json.NewDecoder(r.Body).Decode(&content)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	found := Update(name, content.Text)
+	if !found {
+		http.Error(w, name+" does not exist", 404)
+	}
 }
