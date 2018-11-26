@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/events-app/events-api/internal/cards"
 	"github.com/gorilla/mux"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -19,7 +20,8 @@ func Info(w http.ResponseWriter, r *http.Request) {
 }
 
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
-	content := Find("secured")
+	content := cards.Find("secured")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if err := json.NewEncoder(w).Encode(content); err != nil {
@@ -65,7 +67,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func GetContent(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	content := Find(name)
+	content := cards.Find(name)
 	if content == nil {
 		RespondJSON(true, name+" does not exist", w)
 	}
@@ -77,7 +79,7 @@ func GetContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCards(w http.ResponseWriter, r *http.Request) {
-	cards := GetAll()
+	cards := cards.GetAll()
 	if cards == nil {
 		RespondJSON(true, "no cards in database", w)
 	}
@@ -91,13 +93,13 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 func AddContent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	var content Content
-	err := json.NewDecoder(r.Body).Decode(&content)
+	var c cards.Card
+	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	Add(content.Name, content.Text)
+	cards.Add(c.Name, c.Text)
 }
 
 func UpdateContent(w http.ResponseWriter, r *http.Request) {
@@ -105,13 +107,13 @@ func UpdateContent(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	name := params["name"]
-	var content Content
-	err := json.NewDecoder(r.Body).Decode(&content)
+	var c cards.Card
+	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	found := Update(name, content.Text)
+	found := cards.Update(name, c.Text)
 	if !found {
 		http.Error(w, name+" does not exist", 404)
 	}

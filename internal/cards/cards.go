@@ -1,13 +1,14 @@
-package main
+package cards
 
-// Content is datastructure for cards
-type Content struct {
+// Card holds unique key Name and content Text.
+type Card struct {
 	Name string `json:"name"`
 	Text string `json:"text"`
 }
 
-var cards = []Content{
-	Content{Name: "main", Text: `# The New Event
+// cards stores all cards
+var cards = []Card{
+	Card{Name: "main", Text: `# The New Event
 
 	The New Event is the best event ever.
 	You should definitelly attend!
@@ -17,13 +18,13 @@ var cards = []Content{
 	+ Have fun
 	
 	We are waiting for you!`},
-	Content{Name: "secured", Text: "You are allowed to see this."},
-	Content{Name: "other", Text: "Other content"},
-	Content{Name: "other2", Text: "Other content 2"},
+	Card{Name: "secured", Text: "You are allowed to see this."},
+	Card{Name: "other", Text: "Other content"},
+	Card{Name: "other2", Text: "Other content 2"},
 }
 
 // GetAll returns all cards
-func GetAll() *[]Content {
+func GetAll() *[]Card {
 	if len(cards) == 0 {
 		return nil
 	}
@@ -31,7 +32,7 @@ func GetAll() *[]Content {
 }
 
 // Find returns Content object based on name
-func Find(name string) *Content {
+func Find(name string) *Card {
 	for _, c := range cards {
 		if c.Name == name {
 			return &c
@@ -42,7 +43,7 @@ func Find(name string) *Content {
 
 // Add appends new Content object
 func Add(name, text string) {
-	cards = append(cards, Content{Name: name, Text: text})
+	cards = append(cards, Card{Name: name, Text: text})
 }
 
 // Update changes Content object based on name
