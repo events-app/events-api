@@ -31,11 +31,11 @@ func main() {
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(SecuredContent)),
 	)).Methods("GET")
-	r.HandleFunc("/api/v1/content/{name}", GetContent).Methods("GET")
-	r.HandleFunc("/api/v1/content", GetCards).Methods("GET")
+	r.HandleFunc("/api/v1/card/{name}", GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/card", GetCards).Methods("GET")
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
-	r.HandleFunc("/api/v1/content", AddContent).Methods("POST")
-	r.HandleFunc("/api/v1/content/{name}", UpdateContent).Methods("PUT")
+	r.HandleFunc("/api/v1/card", AddCard).Methods("POST")
+	r.HandleFunc("/api/v1/card/{name}", UpdateCard).Methods("PUT")
 
 	port := os.Getenv("PORT")
 	if port == "" {

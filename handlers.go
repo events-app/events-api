@@ -64,7 +64,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		})
 }
 
-func GetContent(w http.ResponseWriter, r *http.Request) {
+func GetCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
 	content := cards.Find(name)
@@ -90,7 +90,7 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AddContent(w http.ResponseWriter, r *http.Request) {
+func AddCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var c cards.Card
@@ -99,10 +99,12 @@ func AddContent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	cards.Add(c.Name, c.Text)
+	if err = cards.Add(c.Name, c.Text); err != nil {
+		RespondJSON(true, err.Error(), w)
+	}
 }
 
-func UpdateContent(w http.ResponseWriter, r *http.Request) {
+func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
@@ -113,8 +115,7 @@ func UpdateContent(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	found := cards.Update(name, c.Text)
-	if !found {
-		http.Error(w, name+" does not exist", 404)
+	if err = cards.Update(name, c.Text); err != nil {
+		http.Error(w, err.Error(), 404)
 	}
 }

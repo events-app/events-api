@@ -1,5 +1,7 @@
 package cards
 
+import "errors"
+
 // Card holds unique key Name and content Text.
 type Card struct {
 	Name string `json:"name"`
@@ -42,18 +44,24 @@ func Find(name string) *Card {
 }
 
 // Add appends new Content object
-func Add(name, text string) {
+func Add(name, text string) error {
+	// Name of a card must be unique.
+	if Find(name) != nil {
+		return errors.New("card with the name already exists")
+	}
 	cards = append(cards, Card{Name: name, Text: text})
+
+	return nil
 }
 
 // Update changes Content object based on name
-// Returns true if item updated, and false if it was not found
-func Update(name, text string) bool {
+// Returns error if it was not found
+func Update(name, text string) error {
 	for i := range cards {
 		if cards[i].Name == name {
 			cards[i].Text = text
-			return true
+			return nil
 		}
 	}
-	return false
+	return errors.New("card not found")
 }
