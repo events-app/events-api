@@ -27,15 +27,22 @@ func main() {
 	})
 
 	r.HandleFunc("/", Info).Methods("GET")
+	r.Handle("/api/v1/cards/secured", negroni.New(
+		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
+		negroni.Wrap(http.HandlerFunc(SecuredContent)),
+	)).Methods("GET")
+	r.HandleFunc("/api/v1/cards/{name}", GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/cards", GetCards).Methods("GET")
+	r.HandleFunc("/api/v1/login", Login).Methods("POST")
+	r.HandleFunc("/api/v1/cards", AddCard).Methods("POST")
+	r.HandleFunc("/api/v1/cards/{name}", UpdateCard).Methods("PUT")
+
+	// temporary handlers for backward compatibility with frontend
 	r.Handle("/api/v1/content/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(SecuredContent)),
 	)).Methods("GET")
-	r.HandleFunc("/api/v1/card/{name}", GetCard).Methods("GET")
-	r.HandleFunc("/api/v1/card", GetCards).Methods("GET")
-	r.HandleFunc("/api/v1/login", Login).Methods("POST")
-	r.HandleFunc("/api/v1/card", AddCard).Methods("POST")
-	r.HandleFunc("/api/v1/card/{name}", UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/content/{name}", GetCard).Methods("GET")
 
 	port := os.Getenv("PORT")
 	if port == "" {
