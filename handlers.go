@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/events-app/events-api/internal/cards"
+	"github.com/events-app/events-api/internal/user"
+
+	"github.com/events-app/events-api/internal/card"
 	"github.com/gorilla/mux"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -23,7 +25,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 }
 
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
-	content := cards.Find("secured")
+	content := card.Find("secured")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -33,24 +35,24 @@ func SecuredContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
+	var u user.User
+	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		RespondJSON(true, "Could not decode response", w)
 		return
 	}
-	if !ValidateUsername(user.Username) {
+	if !user.ValidateUsername(u.Username) {
 		RespondJSON(true, "Username is invalid", w)
 		return
 	}
-	if user.Username != "admin" || user.Password != "admin" {
+	if u.Username != "admin" || u.Password != "admin" {
 		RespondJSON(true, "Username or password is invalid", w)
 		return
 	}
 	// set token expiration to 15 minutes
 	expireToken := time.Now().Add(time.Minute * 15).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"username": user.Username,
+		"username": u.Username,
 		"exp":      expireToken,
 	})
 	tokenString, err := token.SignedString([]byte(key))
@@ -70,7 +72,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 func GetCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	content := cards.Find(name)
+	content := card.Find(name)
 	if content == nil {
 		RespondJSON(true, name+" does not exist", w)
 	}
@@ -82,7 +84,7 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCards(w http.ResponseWriter, r *http.Request) {
-	cards := cards.GetAll()
+	cards := card.GetAll()
 	if cards == nil {
 		RespondJSON(true, "no cards in database", w)
 	}
@@ -96,13 +98,13 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 func AddCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	var c cards.Card
+	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	if err = cards.Add(c.Name, c.Text); err != nil {
+	if err = card.Add(c.Name, c.Text); err != nil {
 		RespondJSON(true, err.Error(), w)
 	}
 }
@@ -112,13 +114,13 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	name := params["name"]
-	var c cards.Card
+	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	if err = cards.Update(name, c.Text); err != nil {
+	if err = card.Update(name, c.Text); err != nil {
 		http.Error(w, err.Error(), 404)
 	}
 }
