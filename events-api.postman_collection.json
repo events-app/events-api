@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c919fb62-3097-4e06-9188-4164c572326f",
+		"_postman_id": "42daf462-9c99-4434-b1b3-ebdf57b714ef",
 		"name": "events-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -54,7 +54,7 @@
 					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
 				},
 				"url": {
-					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/login",
+					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/login?",
 					"protocol": "https",
 					"host": [
 						"mirek-mockapi",
@@ -110,7 +110,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/content/secured",
+			"name": "http://localhost:8000/api/v1/cards/secured",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -123,20 +123,13 @@
 					]
 				},
 				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
-					}
-				],
+				"header": [],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/content/secured",
+					"raw": "http://localhost:8000/api/v1/cards/secured",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -145,22 +138,15 @@
 					"path": [
 						"api",
 						"v1",
-						"content",
+						"cards",
 						"secured"
-					],
-					"query": [
-						{
-							"key": "Authorization",
-							"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzMzNzIsInVzZXJuYW1lIjoiYWRtaW4ifQ.1zE5TbRy7MygiNVuX1_f9XNNatlTnAofm5msPSyW-cw",
-							"disabled": true
-						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/content/other",
+			"name": "http://localhost:8000/api/v1/cards/other",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -186,7 +172,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/content/other",
+					"raw": "http://localhost:8000/api/v1/cards/other",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -195,7 +181,7 @@
 					"path": [
 						"api",
 						"v1",
-						"content",
+						"cards",
 						"other"
 					]
 				}
@@ -203,7 +189,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/content",
+			"name": "http://localhost:8000/api/v1/cards",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -235,7 +221,7 @@
 					"raw": "{\n    \"name\": \"other10\",\n    \"text\": \"Other content 10\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/content",
+					"raw": "http://localhost:8000/api/v1/cards",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -244,14 +230,14 @@
 					"path": [
 						"api",
 						"v1",
-						"content"
+						"cards"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/content/other",
+			"name": "http://localhost:8000/api/v1/cards/other",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -283,7 +269,7 @@
 					"raw": "{\n    \"text\": \"bla bla bla\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/content/other",
+					"raw": "http://localhost:8000/api/v1/cards/other",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -292,7 +278,7 @@
 					"path": [
 						"api",
 						"v1",
-						"content",
+						"cards",
 						"other"
 					]
 				}
