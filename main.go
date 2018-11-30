@@ -13,6 +13,9 @@ import (
 )
 
 const key = "KLHkjhsd*h67r3gJhjuds"
+const maxUploadSize = 2 * 1048576 // bytes = 2 mb
+const uploadPath = "./uploaded-files"
+const serverPort = "8000"
 
 func main() {
 	r := mux.NewRouter()
@@ -36,6 +39,12 @@ func main() {
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
 	r.HandleFunc("/api/v1/cards", AddCard).Methods("POST")
 	r.HandleFunc("/api/v1/cards/{name}", UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/upload", UploadFile(uploadPath, maxUploadSize)).Methods("POST")
+	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
+	fs := http.FileServer(http.Dir(uploadPath))
+	r.Handle("/files", http.StripPrefix("/files", fs)).Methods("GET")
+	r.Handle("/files/{file}", http.StripPrefix("/files", fs)).Methods("GET")
+	// http.Handle("/files/", http.StripPrefix("/files", fs))
 
 	// temporary handlers for backward compatibility with frontend
 	r.Handle("/api/v1/content/secured", negroni.New(
@@ -46,7 +55,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8000"
+		port = serverPort
 	}
 	log.Println("Listening on port", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), r); err != nil {

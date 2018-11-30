@@ -3,6 +3,10 @@
 *.so
 *.exe
 *.pdf
+*.png
+*.jpg
+*.gif
+*.mp3
 main
 events-api
 debug

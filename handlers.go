@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/events-app/events-api/internal/user"
-
 	"github.com/events-app/events-api/internal/card"
+	"github.com/events-app/events-api/internal/file"
+	"github.com/events-app/events-api/internal/user"
 	"github.com/gorilla/mux"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -22,6 +22,9 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "POST: https://%s/api/v1/login, Body: {\"username\":\"...\", \"password\":\"...\"}\n", r.Host)
 	fmt.Fprintf(w, "POST: https://%s/api/v1/cards, Bearer authorization\n", r.Host)
 	fmt.Fprintf(w, "PUT: https://%s/api/v1/cards/{name}, Bearer authorization\n", r.Host)
+	fmt.Fprintf(w, "POST: https://%s/api/v1/upload, Body: \"file\": somefile\n", r.Host)
+	fmt.Fprintf(w, "GET: https://%s/files\n", r.Host)
+	fmt.Fprintf(w, "GET: https://%s/files/{filename}\n", r.Host)
 }
 
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
@@ -123,4 +126,33 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	if err = card.Update(name, c.Text); err != nil {
 		http.Error(w, err.Error(), 404)
 	}
+}
+
+func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// validate file size
+		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
+		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
+			renderError(w, "file is too largre", http.StatusBadRequest)
+			return
+		}
+
+		// parse and validate file
+		f, _, err := r.FormFile("file")
+		if err != nil {
+			renderError(w, "invalid file", http.StatusBadRequest)
+			return
+		}
+		defer f.Close()
+		filename, err := file.Upload(f, uploadPath)
+		if err != nil {
+			renderError(w, err.Error(), http.StatusBadRequest)
+		}
+		fmt.Fprintf(w, "https://%s/files/%s", r.Host, filename)
+	})
+}
+
+func renderError(w http.ResponseWriter, message string, statusCode int) {
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte(message))
 }
