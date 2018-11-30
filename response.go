@@ -6,13 +6,12 @@ import (
 )
 
 type Response struct {
-	IsError bool   `json:"error"`
-	Text    string `json:"message"`
+	Message string `json:"error"`
 }
 
-// RespondJSON returns message and information if message is error
-func RespondJSON(isError bool, text string, w http.ResponseWriter) {
-	response := Response{isError, text}
+// ErrorJSON returns error message in JSON format
+func ErrorJSON(w http.ResponseWriter, message string) {
+	response := Response{Message: message}
 
 	jsonResponse, err := json.Marshal(response)
 	if err != nil {
@@ -24,3 +23,8 @@ func RespondJSON(isError bool, text string, w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(jsonResponse)
 }
+
+// func renderError(w http.ResponseWriter, message string, statusCode int) {
+// 	w.WriteHeader(http.StatusBadRequest)
+// 	w.Write([]byte(message))
+// }

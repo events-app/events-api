@@ -12,6 +12,14 @@ import (
 	"path/filepath"
 )
 
+type File struct {
+	Path string `json:"path"`
+}
+
+func New(path string) *File {
+	return &File{path}
+}
+
 // Upload handles uploading files like png, jpg, etc to server
 func Upload(file io.Reader, path string) (string, error) {
 	fileBytes, err := ioutil.ReadAll(file)

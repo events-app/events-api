@@ -25,7 +25,7 @@ func main() {
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			RespondJSON(true, err, w)
+			ErrorJSON(w, err)
 		},
 	})
 

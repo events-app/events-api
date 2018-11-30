@@ -41,15 +41,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
-		RespondJSON(true, "Could not decode response", w)
+		ErrorJSON(w, "Could not decode response")
 		return
 	}
 	if !user.ValidateUsername(u.Username) {
-		RespondJSON(true, "Username is invalid", w)
+		ErrorJSON(w, "Username is invalid")
 		return
 	}
 	if u.Username != "admin" || u.Password != "admin" {
-		RespondJSON(true, "Username or password is invalid", w)
+		ErrorJSON(w, "Username or password is invalid")
 		return
 	}
 	// set token expiration to 15 minutes
@@ -60,7 +60,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
-		RespondJSON(true, err.Error(), w)
+		ErrorJSON(w, err.Error())
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -77,7 +77,8 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 	name := params["name"]
 	content := card.Find(name)
 	if content == nil {
-		RespondJSON(true, name+" does not exist", w)
+		ErrorJSON(w, name+" does not exist")
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -89,7 +90,8 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 func GetCards(w http.ResponseWriter, r *http.Request) {
 	cards := card.GetAll()
 	if cards == nil {
-		RespondJSON(true, "no cards in database", w)
+		ErrorJSON(w, "no cards in database")
+		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -108,7 +110,7 @@ func AddCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err = card.Add(c.Name, c.Text); err != nil {
-		RespondJSON(true, err.Error(), w)
+		ErrorJSON(w, err.Error())
 	}
 }
 
@@ -130,29 +132,31 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 
 func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		// validate file size
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-			renderError(w, "file is too largre", http.StatusBadRequest)
+			ErrorJSON(w, "file is too largre")
+			// renderError(w, "file is too largre", http.StatusBadRequest)
 			return
 		}
 
 		// parse and validate file
 		f, _, err := r.FormFile("file")
 		if err != nil {
-			renderError(w, "invalid file", http.StatusBadRequest)
+			ErrorJSON(w, "invalid file")
 			return
 		}
 		defer f.Close()
 		filename, err := file.Upload(f, uploadPath)
 		if err != nil {
-			renderError(w, err.Error(), http.StatusBadRequest)
+			ErrorJSON(w, err.Error())
 		}
-		fmt.Fprintf(w, "https://%s/files/%s", r.Host, filename)
+		fl := file.New(fmt.Sprintf("https://%s/files/%s", r.Host, filename))
+		// f := file.File{Path: fmt.Sprintf("https://%s/files/%s", r.Host, filename)}
+		if err := json.NewEncoder(w).Encode(&fl); err != nil {
+			log.Printf("error: encoding response: %s", err)
+		}
 	})
-}
-
-func renderError(w http.ResponseWriter, message string, statusCode int) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte(message))
 }
