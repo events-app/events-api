@@ -27,11 +27,17 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "GET: https://%s/files/{filename}\n", r.Host)
 }
 
+// headerMiddlaware makes every handler use headers CORS and JSON
+func headerMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
 	content := card.Find("secured")
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if err := json.NewEncoder(w).Encode(content); err != nil {
 		log.Printf("error: encoding response: %s", err)
 	}
@@ -63,8 +69,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		ErrorJSON(w, err.Error())
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(w).Encode(
 		JwtToken{
 			Token:   tokenString,
@@ -80,8 +84,6 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 		ErrorJSON(w, name+" does not exist")
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if err := json.NewEncoder(w).Encode(&content); err != nil {
 		log.Printf("error: encoding response: %s", err)
 	}
@@ -93,16 +95,12 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 		ErrorJSON(w, "no cards in database")
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if err := json.NewEncoder(w).Encode(&cards); err != nil {
 		log.Printf("error: encoding response: %s", err)
 	}
 }
 
 func AddCard(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
@@ -115,8 +113,6 @@ func AddCard(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateCard(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	params := mux.Vars(r)
 	name := params["name"]
 	var c card.Card
@@ -132,8 +128,6 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 
 func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
 		// validate file size
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {

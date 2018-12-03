@@ -19,6 +19,8 @@ const serverPort = "8000"
 
 func main() {
 	r := mux.NewRouter()
+	// use middleware handler
+	r.Use(headerMiddleware)
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(key), nil
