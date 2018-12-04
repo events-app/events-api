@@ -27,11 +27,12 @@ func main() {
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			ErrorJSON(w, err)
+			ErrorJSON(w, err, http.StatusInternalServerError)
 		},
 	})
 
 	r.HandleFunc("/", Info).Methods("GET")
+	r.HandleFunc("/api/v1/health", HealthCheck).Methods("GET")
 	r.Handle("/api/v1/cards/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(SecuredContent)),
@@ -44,6 +45,7 @@ func main() {
 	r.HandleFunc("/api/v1/upload", UploadFile(uploadPath, maxUploadSize)).Methods("POST")
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
 	fs := http.FileServer(http.Dir(uploadPath))
+	// r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
 	r.Handle("/files", http.StripPrefix("/files", fs)).Methods("GET")
 	r.Handle("/files/{file}", http.StripPrefix("/files", fs)).Methods("GET")
 	// http.Handle("/files/", http.StripPrefix("/files", fs))

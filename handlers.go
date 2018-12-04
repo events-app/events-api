@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -25,6 +26,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "POST: https://%s/api/v1/upload, Body: \"file\": somefile\n", r.Host)
 	fmt.Fprintf(w, "GET: https://%s/files\n", r.Host)
 	fmt.Fprintf(w, "GET: https://%s/files/{filename}\n", r.Host)
+	fmt.Fprintf(w, "GET: https://%s/health\n", r.Host)
 }
 
 // headerMiddlaware makes every handler use headers CORS and JSON
@@ -34,6 +36,13 @@ func headerMiddleware(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		next.ServeHTTP(w, r)
 	})
+}
+
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	// In the future we could report back on the status of our DB, or our cache
+	// (e.g. Redis) by performing a simple PING, and include them in the response.
+	io.WriteString(w, `{"alive": true}`)
 }
 
 func SecuredContent(w http.ResponseWriter, r *http.Request) {
@@ -47,15 +56,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
-		ErrorJSON(w, "Could not decode response")
+		ErrorJSON(w, "Could not decode response", http.StatusBadRequest)
 		return
 	}
 	if !user.ValidateUsername(u.Username) {
-		ErrorJSON(w, "Username is invalid")
+		ErrorJSON(w, "Username is invalid", http.StatusBadRequest)
 		return
 	}
 	if u.Username != "admin" || u.Password != "admin" {
-		ErrorJSON(w, "Username or password is invalid")
+		ErrorJSON(w, "Username or password is invalid", http.StatusBadRequest)
 		return
 	}
 	// set token expiration to 15 minutes
@@ -66,7 +75,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
-		ErrorJSON(w, err.Error())
+		ErrorJSON(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	json.NewEncoder(w).Encode(
@@ -81,7 +90,7 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 	name := params["name"]
 	content := card.Find(name)
 	if content == nil {
-		ErrorJSON(w, name+" does not exist")
+		ErrorJSON(w, name+" does not exist", http.StatusNoContent)
 		return
 	}
 	if err := json.NewEncoder(w).Encode(&content); err != nil {
@@ -92,7 +101,7 @@ func GetCard(w http.ResponseWriter, r *http.Request) {
 func GetCards(w http.ResponseWriter, r *http.Request) {
 	cards := card.GetAll()
 	if cards == nil {
-		ErrorJSON(w, "no cards in database")
+		ErrorJSON(w, "no cards in database", http.StatusNoContent)
 		return
 	}
 	if err := json.NewEncoder(w).Encode(&cards); err != nil {
@@ -103,13 +112,16 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 func AddCard(w http.ResponseWriter, r *http.Request) {
 	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
+
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	if err = card.Add(c.Name, c.Text); err != nil {
-		ErrorJSON(w, err.Error())
+		ErrorJSON(w, err.Error(), http.StatusConflict)
+		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func UpdateCard(w http.ResponseWriter, r *http.Request) {
@@ -122,8 +134,11 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err = card.Update(name, c.Text); err != nil {
-		http.Error(w, err.Error(), 404)
+		ErrorJSON(w, err.Error(), http.StatusNotFound)
+		return
+		// http.Error(w, err.Error(), 404)
 	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
@@ -131,7 +146,7 @@ func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 		// validate file size
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-			ErrorJSON(w, "file is too largre")
+			ErrorJSON(w, "file is too largre", http.StatusBadRequest)
 			// renderError(w, "file is too largre", http.StatusBadRequest)
 			return
 		}
@@ -139,13 +154,14 @@ func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 		// parse and validate file
 		f, _, err := r.FormFile("file")
 		if err != nil {
-			ErrorJSON(w, "invalid file")
+			ErrorJSON(w, "invalid file", http.StatusBadRequest)
 			return
 		}
 		defer f.Close()
 		filename, err := file.Upload(f, uploadPath)
 		if err != nil {
-			ErrorJSON(w, err.Error())
+			ErrorJSON(w, err.Error(), http.StatusBadRequest)
+			return
 		}
 		fl := file.New(fmt.Sprintf("https://%s/files/%s", r.Host, filename))
 		// f := file.File{Path: fmt.Sprintf("https://%s/files/%s", r.Host, filename)}

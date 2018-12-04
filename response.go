@@ -10,7 +10,7 @@ type Response struct {
 }
 
 // ErrorJSON returns error message in JSON format
-func ErrorJSON(w http.ResponseWriter, message string) {
+func ErrorJSON(w http.ResponseWriter, message string, statusCode int) {
 	response := Response{Message: message}
 
 	jsonResponse, err := json.Marshal(response)
@@ -18,7 +18,7 @@ func ErrorJSON(w http.ResponseWriter, message string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
+	w.WriteHeader(statusCode)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(jsonResponse)
