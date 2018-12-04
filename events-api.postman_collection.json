@@ -189,7 +189,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/cards",
+			"name": "http://localhost:8000/api/v1/files",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -205,23 +205,23 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
 						"type": "text",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
 						"disabled": true
 					},
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"name\": \"other10\",\n    \"text\": \"Other content 10\"\n}"
+					"raw": "{\n    \"file\": \"C:\\\\tmp\\\\accelerated_pac_base.pac\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/v1/cards",
+					"raw": "http://localhost:8000/api/v1/files",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -230,7 +230,7 @@
 					"path": [
 						"api",
 						"v1",
-						"cards"
+						"files"
 					]
 				}
 			},
@@ -280,6 +280,102 @@
 						"v1",
 						"cards",
 						"other"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/files/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/files/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"files",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"files",
+						"103784a3cd2f5329b0974528.png"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/v1/cards",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"new\",\n    \"text\": \"bla bla bla\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cards",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cards"
 					]
 				}
 			},
