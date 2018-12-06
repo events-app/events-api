@@ -56,7 +56,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
-		ErrorJSON(w, "Could not decode response", http.StatusBadRequest)
+		ErrorJSON(w, "Could not decode response", http.StatusInternalServerError)
 		return
 	}
 	if !user.ValidateUsername(u.Username) {
@@ -114,7 +114,7 @@ func AddCard(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&c)
 
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		ErrorJSON(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if err = card.Add(c.Name, c.Text); err != nil {
@@ -130,7 +130,7 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		ErrorJSON(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if err = card.Update(name, c.Text); err != nil {
