@@ -1,6 +1,8 @@
 package card
 
-import "errors"
+import (
+	"errors"
+)
 
 // Card holds unique key Name and content Text.
 type Card struct {
@@ -45,7 +47,10 @@ func Find(name string) *Card {
 
 // Add appends new Content object
 func Add(name, text string) error {
-	// Name of a card must be unique.
+	// Name of a card must be unique for specyfic user.
+	if !ValidateName(name) {
+		return errors.New("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
+	}
 	if Find(name) != nil {
 		return errors.New("card with the name already exists")
 	}
@@ -57,6 +62,10 @@ func Add(name, text string) error {
 // Update changes Content object based on name
 // Returns error if it was not found
 func Update(name, text string) error {
+	// Name of a card must be unique for specyfic user.
+	if !ValidateName(name) {
+		return errors.New("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
+	}
 	for i := range cards {
 		if cards[i].Name == name {
 			cards[i].Text = text
