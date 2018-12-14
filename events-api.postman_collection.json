@@ -38,7 +38,7 @@
 			"response": []
 		},
 		{
-			"name": "https://mirek-mockapi.herokuapp.com/api/v1/login",
+			"name": "http://localhost:8000/api/v1/login",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -83,33 +83,6 @@
 			"response": []
 		},
 		{
-			"name": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
-					"protocol": "https",
-					"host": [
-						"mirek-mockapi",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"content",
-						"main"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "http://localhost:8000/api/v1/cards/secured",
 			"request": {
 				"auth": {
@@ -146,7 +119,7 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8000/api/v1/cards/other",
+			"name": "http://localhost:8000/api/v1/cards/main",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -376,6 +349,156 @@
 						"api",
 						"v1",
 						"cards"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:8000/api/v1/login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
+				},
+				"url": {
+					"raw": "https://localhost:8000/api/v1/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "admin",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/v1/cards/main",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cards/main",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cards",
+						"main"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/v1/cards/new23",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/v1/cards/new23",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"cards",
+						"new23"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
+					"protocol": "https",
+					"host": [
+						"mirek-mockapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"v1",
+						"content",
+						"main"
 					]
 				}
 			},
