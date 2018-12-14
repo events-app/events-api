@@ -42,6 +42,7 @@ func main() {
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
 	r.HandleFunc("/api/v1/cards", AddCard).Methods("POST")
 	r.HandleFunc("/api/v1/cards/{name}", UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/cards/{name}", DeleteCard).Methods("DELETE")
 	r.HandleFunc("/api/v1/upload", UploadFile(uploadPath, maxUploadSize)).Methods("POST")
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
 	fs := http.FileServer(http.Dir(uploadPath))

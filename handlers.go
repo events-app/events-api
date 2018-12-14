@@ -24,6 +24,7 @@ func Info(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "POST: https://%s/api/v1/login, Body: {\"username\":\"...\", \"password\":\"...\"}\n", r.Host)
 	fmt.Fprintf(w, "POST: https://%s/api/v1/cards, Bearer authorization\n", r.Host)
 	fmt.Fprintf(w, "PUT: https://%s/api/v1/cards/{name}, Bearer authorization\n", r.Host)
+	fmt.Fprintf(w, "DELETE: https://%s/api/v1/cards/{name}\n", r.Host)
 	fmt.Fprintf(w, "POST: https://%s/api/v1/upload, Body: \"file\": somefile\n", r.Host)
 	fmt.Fprintf(w, "GET: https://%s/files\n", r.Host)
 	fmt.Fprintf(w, "GET: https://%s/files/{filename}\n", r.Host)
@@ -144,6 +145,16 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 		ErrorJSON(w, err.Error(), http.StatusNotFound)
 		return
 		// http.Error(w, err.Error(), 404)
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func DeleteCard(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	name := params["name"]
+	if err := card.Delete(name); err != nil {
+		ErrorJSON(w, err.Error(), http.StatusNotFound)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 }

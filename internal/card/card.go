@@ -62,10 +62,6 @@ func Add(name, text string) error {
 // Update changes Content object based on name
 // Returns error if it was not found
 func Update(name, text string) error {
-	// Name of a card must be unique for specyfic user.
-	if !ValidateName(name) {
-		return errors.New("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
-	}
 	for i := range cards {
 		if cards[i].Name == name {
 			cards[i].Text = text
@@ -74,3 +70,39 @@ func Update(name, text string) error {
 	}
 	return errors.New("card not found")
 }
+
+func Delete(name string) error {
+	if len(cards) == 0 {
+		return errors.New("no cards in database")
+	}
+	var index int
+	var found bool
+	for i := range cards {
+		if cards[i].Name == name {
+			index = i
+			found = true
+		}
+	}
+	if !found {
+		return errors.New("card not found")
+	}
+	cards = append(cards[:index], cards[index+1:]...)
+	return nil
+}
+
+// // delete element from slice of strings
+// func delete(lst []Card, element string) ([]Card, error) {
+// 	var index int
+// 	var found bool
+// 	for i, l := range lst {
+// 		if l.Name == element {
+// 			index = i
+// 			found = true
+// 		}
+// 	}
+// 	if !found {
+// 		return lst, errors.New("element not found")
+// 	}
+// 	lst = append(lst[:index], lst[index+1:]...)
+// 	return lst, nil
+// }
