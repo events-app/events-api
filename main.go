@@ -9,6 +9,8 @@ import (
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/events-app/events-api/handlers"
+	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
 )
 
@@ -20,30 +22,30 @@ const serverPort = "8000"
 func main() {
 	r := mux.NewRouter()
 	// use middleware handler
-	r.Use(HeaderMiddleware)
+	r.Use(handlers.HeaderMiddleware)
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(key), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			ErrorJSON(w, err, http.StatusInternalServerError)
+			web.ErrorJSON(w, err, http.StatusInternalServerError)
 		},
 	})
 
-	r.HandleFunc("/", Info).Methods("GET")
-	r.HandleFunc("/api/v1/health", HealthCheck).Methods("GET")
+	r.HandleFunc("/", handlers.Info).Methods("GET")
+	r.HandleFunc("/api/v1/health", handlers.HealthCheck).Methods("GET")
 	r.Handle("/api/v1/cards/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(SecuredContent)),
+		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
 	)).Methods("GET")
-	r.HandleFunc("/api/v1/cards/{name}", GetCard).Methods("GET")
-	r.HandleFunc("/api/v1/cards", GetCards).Methods("GET")
+	r.HandleFunc("/api/v1/cards/{name}", handlers.GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/cards", handlers.GetCards).Methods("GET")
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
-	r.HandleFunc("/api/v1/cards", AddCard).Methods("POST")
-	r.HandleFunc("/api/v1/cards/{name}", UpdateCard).Methods("PUT")
-	r.HandleFunc("/api/v1/cards/{name}", DeleteCard).Methods("DELETE")
-	r.HandleFunc("/api/v1/upload", UploadFile(uploadPath, maxUploadSize)).Methods("POST")
+	r.HandleFunc("/api/v1/cards", handlers.AddCard).Methods("POST")
+	r.HandleFunc("/api/v1/cards/{name}", handlers.UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/cards/{name}", handlers.DeleteCard).Methods("DELETE")
+	r.HandleFunc("/api/v1/upload", handlers.UploadFile(uploadPath, maxUploadSize)).Methods("POST")
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
 	fs := http.FileServer(http.Dir(uploadPath))
 	// r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
@@ -54,9 +56,9 @@ func main() {
 	// temporary handlers for backward compatibility with frontend
 	r.Handle("/api/v1/content/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(SecuredContent)),
+		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
 	)).Methods("GET")
-	r.HandleFunc("/api/v1/content/{name}", GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/content/{name}", handlers.GetCard).Methods("GET")
 
 	port := os.Getenv("PORT")
 	if port == "" {

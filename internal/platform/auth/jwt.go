@@ -1,4 +1,4 @@
-package main
+package auth
 
 type JwtToken struct {
 	Token   string `json:"token"`
