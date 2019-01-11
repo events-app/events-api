@@ -48,8 +48,9 @@ func main() {
 	r.HandleFunc("/api/v1/upload", handlers.UploadFile(uploadPath, maxUploadSize)).Methods("POST")
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
 	fs := http.FileServer(http.Dir(uploadPath))
-	// r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
-	r.Handle("/files", http.StripPrefix("/files", fs)).Methods("GET")
+	// --- r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
+	// r.Handle("/files", http.StripPrefix("/files", fs)).Methods("GET")
+	r.HandleFunc("/files", handlers.GetFiles(uploadPath)).Methods("GET")
 	r.Handle("/files/{file}", http.StripPrefix("/files", fs)).Methods("GET")
 	// http.Handle("/files/", http.StripPrefix("/files", fs))
 
