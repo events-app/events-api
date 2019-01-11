@@ -33,9 +33,7 @@ func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 			web.ErrorJSON(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		file.Path = fmt.Sprintf("https://%s/files/%s", r.Host, file.Path)
-		// fl := file.New(fmt.Sprintf("https://%s/files/%s", r.Host, file.Name))
-		// f := file.File{Path: fmt.Sprintf("https://%s/files/%s", r.Host, filename)}
+		file.Path = fmt.Sprintf("%s://%s/files/%s", GetProtocol(r), r.Host, file.Path)
 		if err := json.NewEncoder(w).Encode(&file); err != nil {
 			log.Printf("error: encoding response: %s", err)
 		}
