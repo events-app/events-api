@@ -41,11 +41,19 @@ func main() {
 	)).Methods("GET")
 	r.HandleFunc("/api/v1/cards/{name}", handlers.GetCard).Methods("GET")
 	r.HandleFunc("/api/v1/cards", handlers.GetCards).Methods("GET")
-	r.HandleFunc("/api/v1/login", Login).Methods("POST")
 	r.HandleFunc("/api/v1/cards", handlers.AddCard).Methods("POST")
 	r.HandleFunc("/api/v1/cards/{name}", handlers.UpdateCard).Methods("PUT")
 	r.HandleFunc("/api/v1/cards/{name}", handlers.DeleteCard).Methods("DELETE")
+
+	r.HandleFunc("/api/v1/login", Login).Methods("POST")
+
+	r.HandleFunc("/api/v1/menus/{name}", handlers.GetMenu).Methods("GET")
+	r.HandleFunc("/api/v1/menus", handlers.GetMenus).Methods("GET")
+	r.HandleFunc("/api/v1/menus", handlers.AddMenu).Methods("POST")
+	r.HandleFunc("/api/v1/menus/{name}", handlers.UpdateMenu).Methods("PUT")
+	r.HandleFunc("/api/v1/menus/{name}", handlers.DeleteMenu).Methods("DELETE")
 	r.HandleFunc("/api/v1/upload", handlers.UploadFile(uploadPath, maxUploadSize)).Methods("POST")
+	
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
 	fs := http.FileServer(http.Dir(uploadPath))
 	// --- r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
