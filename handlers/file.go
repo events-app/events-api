@@ -1,9 +1,7 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/events-app/events-api/internal/file"
@@ -15,39 +13,34 @@ func UploadFile(uploadPath string, maxUploadSize int64) http.HandlerFunc {
 		// validate file size
 		r.Body = http.MaxBytesReader(w, r.Body, maxUploadSize)
 		if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-			web.ErrorJSON(w, "file is too largre", http.StatusBadRequest)
-			// renderError(w, "file is too largre", http.StatusBadRequest)
+			web.RespondWithError(w, http.StatusBadRequest, "file is too largre")
 			return
 		}
 
 		// parse and validate file
 		f, header, err := r.FormFile("file")
 		if err != nil {
-			web.ErrorJSON(w, "invalid file", http.StatusBadRequest)
+			web.RespondWithError(w, http.StatusBadRequest, "invalid file")
 			return
 		}
 		realName := header.Filename
 		defer f.Close()
 		file, err := file.Upload(f, uploadPath, realName)
 		if err != nil {
-			web.ErrorJSON(w, err.Error(), http.StatusBadRequest)
+			web.RespondWithError(w, http.StatusBadRequest, err.Error())
 			return
 		}
 		file.Path = fmt.Sprintf("%s://%s/files/%s", GetProtocol(r), r.Host, file.Path)
-		if err := json.NewEncoder(w).Encode(&file); err != nil {
-			log.Printf("error: encoding response: %s", err)
-		}
+		web.RespondWithJSON(w, http.StatusOK, file)
 	})
 }
 func GetFiles(path string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		files, err := file.ReadDir(path)
 		if err != nil {
-			web.ErrorJSON(w, err.Error(), http.StatusBadRequest)
+			web.RespondWithError(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		if err := json.NewEncoder(w).Encode(&files); err != nil {
-			log.Printf("error: encoding response: %s", err)
-		}
+		web.RespondWithJSON(w, http.StatusOK, files)
 	})
 }

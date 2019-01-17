@@ -2,7 +2,6 @@ package file
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,7 +20,7 @@ type File struct {
 func Upload(file io.Reader, path string, realName string) (*File, error) {
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, errors.New("invalid file")
+		return nil, fmt.Errorf("invalid file")
 	}
 
 	// check file type, detectcontenttype only needs the first 512 bytes
@@ -32,23 +31,23 @@ func Upload(file io.Reader, path string, realName string) (*File, error) {
 	case "application/pdf":
 		break
 	default:
-		return nil, errors.New("invalid file type")
+		return nil, fmt.Errorf("invalid file type")
 	}
 	fileName := randToken(12)
 	fileEndings, err := mime.ExtensionsByType(filetype)
 	if err != nil {
-		return nil, errors.New("cannot read file type")
+		return nil, fmt.Errorf("cannot read file type")
 	}
 	newPath := filepath.Join(path, fileName+fileEndings[0])
 
 	// write file
 	newFile, err := os.Create(newPath)
 	if err != nil {
-		return nil, errors.New("cannot write file")
+		return nil, fmt.Errorf("cannot write file")
 	}
 	defer newFile.Close() // idempotent, okay to call twice
 	if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
-		return nil, errors.New("canot write file")
+		return nil, fmt.Errorf("canot write file")
 	}
 	return &File{realName, fileName + fileEndings[0]}, nil
 }

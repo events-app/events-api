@@ -28,8 +28,8 @@ func main() {
 			return []byte(key), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
-		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err string) {
-			web.ErrorJSON(w, err, http.StatusInternalServerError)
+		ErrorHandler: func(w http.ResponseWriter, r *http.Request, errMessage string) {
+			web.RespondWithError(w, http.StatusInternalServerError, errMessage)
 		},
 	})
 
@@ -39,7 +39,7 @@ func main() {
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
 		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
 	)).Methods("GET")
-	
+
 	r.HandleFunc("/api/v1/cards/{name}", handlers.GetCard).Methods("GET")
 	r.HandleFunc("/api/v1/cards", handlers.GetCards).Methods("GET")
 	r.HandleFunc("/api/v1/cards", handlers.AddCard).Methods("POST")

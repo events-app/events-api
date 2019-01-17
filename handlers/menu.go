@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/events-app/events-api/internal/card"
+	"github.com/events-app/events-api/internal/menu"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
 )
@@ -12,16 +12,16 @@ import (
 func GetMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	menu, err := card.FindMenu(name)
+	m, err := menu.Find(name)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, menu)
+	web.RespondWithJSON(w, http.StatusOK, m)
 }
 
 func GetMenus(w http.ResponseWriter, r *http.Request) {
-	menus, err := card.GetAllMenus()
+	menus, err := menu.GetAll()
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
@@ -30,14 +30,14 @@ func GetMenus(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddMenu(w http.ResponseWriter, r *http.Request) {
-	var m card.Menu
+	var m menu.Menu
 	err := json.NewDecoder(r.Body).Decode(&m)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	if err = card.AddMenu(m.Name, m.Card); err != nil {
+	if err = menu.Add(m.Name, m.Card); err != nil {
 		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
@@ -47,7 +47,7 @@ func AddMenu(w http.ResponseWriter, r *http.Request) {
 func UpdateMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	var m card.Menu
+	var m menu.Menu
 	err := json.NewDecoder(r.Body).Decode(&m)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
@@ -55,7 +55,7 @@ func UpdateMenu(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 	m.Name = name
-	if err = card.UpdateMenu(name, m.Card); err != nil {
+	if err = menu.Update(name, m.Card); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
@@ -65,7 +65,7 @@ func UpdateMenu(w http.ResponseWriter, r *http.Request) {
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	if err := card.DeleteMenu(name); err != nil {
+	if err := menu.Delete(name); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}

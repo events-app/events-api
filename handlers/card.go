@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/events-app/events-api/internal/card"
@@ -13,25 +12,21 @@ import (
 func GetCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	content := card.Find(name)
-	if content == nil {
-		web.ErrorJSON(w, name+" does not exist", http.StatusNoContent)
+	c, err := card.Find(name)
+	if err != nil {
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	if err := json.NewEncoder(w).Encode(&content); err != nil {
-		log.Printf("error: encoding response: %s", err)
-	}
+	web.RespondWithJSON(w, http.StatusOK, c)
 }
 
 func GetCards(w http.ResponseWriter, r *http.Request) {
-	cards := card.GetAll()
-	if cards == nil {
-		web.ErrorJSON(w, "no cards in database", http.StatusNoContent)
+	cards, err := card.GetAll()
+	if err != nil {
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	if err := json.NewEncoder(w).Encode(&cards); err != nil {
-		log.Printf("error: encoding response: %s", err)
-	}
+	web.RespondWithJSON(w, http.StatusOK, cards)
 }
 
 func AddCard(w http.ResponseWriter, r *http.Request) {
@@ -39,14 +34,15 @@ func AddCard(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&c)
 
 	if err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	defer r.Body.Close()
 	if err = card.Add(c.Name, c.Text); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusConflict)
+		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+	web.RespondWithJSON(w, http.StatusCreated, c)
 }
 
 func UpdateCard(w http.ResponseWriter, r *http.Request) {
@@ -55,23 +51,24 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	defer r.Body.Close()
 	if err = card.Update(name, c.Text); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusNotFound)
+		web.RespondWithError(w, http.StatusNotFound, err.Error(), )
 		return
 		// http.Error(w, err.Error(), 404)
 	}
-	w.WriteHeader(http.StatusOK)
+	web.RespondWithJSON(w, http.StatusOK, c)
 }
 
 func DeleteCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
 	if err := card.Delete(name); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusNotFound)
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	web.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }

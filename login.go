@@ -16,16 +16,17 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	var u user.User
 	err := json.NewDecoder(r.Body).Decode(&u)
+	r.Body.Close()
 	if err != nil {
-		web.ErrorJSON(w, "Could not decode response", http.StatusInternalServerError)
+		web.RespondWithError(w, http.StatusInternalServerError, "Could not decode response")
 		return
 	}
 	if !user.ValidateUsername(u.Username) {
-		web.ErrorJSON(w, "Username is invalid", http.StatusBadRequest)
+		web.RespondWithError(w, http.StatusBadRequest, "Username is invalid")
 		return
 	}
 	if u.Username != "admin" || u.Password != "admin" {
-		web.ErrorJSON(w, "Username or password is invalid", http.StatusBadRequest)
+		web.RespondWithError(w, http.StatusBadRequest, "Username or password is invalid")
 		return
 	}
 	// set token expiration to 15 minutes
@@ -36,10 +37,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusBadRequest)
+		web.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	json.NewEncoder(w).Encode(
+	web.RespondWithJSON(w, http.StatusOK,
 		auth.JwtToken{
 			Token:   tokenString,
 			Expires: expireToken,

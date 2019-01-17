@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// HeaderMiddlaware makes every handler use headers CORS and JSON
+// HeaderMiddleware makes every handler use headers CORS and JSON
 func HeaderMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// workaround

@@ -1,7 +1,7 @@
 package card
 
 import (
-	"errors"
+	"fmt"
 )
 
 // Card holds unique key Name and content Text.
@@ -28,31 +28,31 @@ var cards = []Card{
 }
 
 // GetAll returns all cards
-func GetAll() *[]Card {
+func GetAll() (*[]Card, error) {
 	if len(cards) == 0 {
-		return nil
+		return nil, fmt.Errorf("cannot find any card object")
 	}
-	return &cards
+	return &cards, nil
 }
 
 // Find returns Content object based on name
-func Find(name string) *Card {
+func Find(name string) (*Card, error) {
 	for _, c := range cards {
 		if c.Name == name {
-			return &c
+			return &c, nil
 		}
 	}
-	return nil
+	return nil, fmt.Errorf("cannot find a card named: %s", name)
 }
 
 // Add appends new Content object
 func Add(name, text string) error {
 	// Name of a card must be unique for specyfic user.
 	if !ValidateName(name) {
-		return errors.New("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
+		return fmt.Errorf("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
-	if Find(name) != nil {
-		return errors.New("card with the name already exists")
+	if _, err := Find(name); err != nil {
+		return fmt.Errorf("card with the name already exists")
 	}
 	cards = append(cards, Card{Name: name, Text: text})
 
@@ -68,12 +68,12 @@ func Update(name, text string) error {
 			return nil
 		}
 	}
-	return errors.New("card not found")
+	return fmt.Errorf("card not found")
 }
 
 func Delete(name string) error {
 	if len(cards) == 0 {
-		return errors.New("no cards in database")
+		return fmt.Errorf("no cards in database")
 	}
 	var index int
 	var found bool
@@ -84,25 +84,8 @@ func Delete(name string) error {
 		}
 	}
 	if !found {
-		return errors.New("card not found")
+		return fmt.Errorf("card not found")
 	}
 	cards = append(cards[:index], cards[index+1:]...)
 	return nil
 }
-
-// // delete element from slice of strings
-// func delete(lst []Card, element string) ([]Card, error) {
-// 	var index int
-// 	var found bool
-// 	for i, l := range lst {
-// 		if l.Name == element {
-// 			index = i
-// 			found = true
-// 		}
-// 	}
-// 	if !found {
-// 		return lst, errors.New("element not found")
-// 	}
-// 	lst = append(lst[:index], lst[index+1:]...)
-// 	return lst, nil
-// }
