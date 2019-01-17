@@ -1,7 +1,6 @@
 package card
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -21,29 +20,29 @@ var menus = []Menu{
 // GetAllMenus returns all menus
 func GetAllMenus() (*[]Menu, error) {
 	if len(menus) == 0 {
-		return nil, fmt.Errorf("cannot find any object")
+		return nil, fmt.Errorf("cannot find any menu object")
 	}
 	return &menus, nil
 }
 
-// FindMenu returns Content object based on name
+// FindMenu returns menu object based on name
 func FindMenu(name string) (*Menu, error) {
 	for _, c := range menus {
 		if c.Name == name {
 			return &c, nil
 		}
 	}
-	return nil, fmt.Errorf("cannot find any object of name: %s", name)
+	return nil, fmt.Errorf("cannot find a menu named: %s", name)
 }
 
 // AddMenu appends new Menu object
 func AddMenu(name, card string) error {
 	// Name of a menu must be unique for specyfic user.
 	if !ValidateName(name) {
-		return errors.New("name should be 4-30 characters long and should consists of letters, numbers, -, _")
+		return fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
-	if Find(name) != nil {
-		return errors.New("menu with the name already exists")
+	if _, err := FindMenu(name); err != nil {
+		return fmt.Errorf("menu with the name already exists")
 	}
 	menus = append(menus, Menu{Name: name, Card: card})
 
@@ -59,12 +58,12 @@ func UpdateMenu(name, card string) error {
 			return nil
 		}
 	}
-	return errors.New("menu not found")
+	return fmt.Errorf("menu not found")
 }
 
 func DeleteMenu(name string) error {
 	if len(menus) == 0 {
-		return errors.New("no menus in database")
+		return fmt.Errorf("no menus in database")
 	}
 	var index int
 	var found bool
@@ -75,7 +74,7 @@ func DeleteMenu(name string) error {
 		}
 	}
 	if !found {
-		return errors.New("menu not found")
+		return fmt.Errorf("menu not found")
 	}
 	menus = append(menus[:index], menus[index+1:]...)
 	return nil
