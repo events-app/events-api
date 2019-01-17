@@ -2,6 +2,7 @@ package card
 
 import (
 	"errors"
+	"fmt"
 )
 
 // Menu holds Name and wired card.
@@ -10,36 +11,36 @@ type Menu struct {
 	Card string `json:"card"`
 }
 
-// cards stores all cards
+// menus stores all the menus
 var menus = []Menu{
 	Menu{Name: "Main menu", Card: "main"},
 	Menu{Name: "Secured", Card: "secured"},
 	Menu{Name: "Other menu", Card: "other"},
 }
 
-// GetAll returns all menus
-func GetAllMenus() *[]Menu {
+// GetAllMenus returns all menus
+func GetAllMenus() (*[]Menu, error) {
 	if len(menus) == 0 {
-		return nil
+		return nil, fmt.Errorf("cannot find any object")
 	}
-	return &menus
+	return &menus, nil
 }
 
 // FindMenu returns Content object based on name
-func FindMenu(name string) *Menu {
+func FindMenu(name string) (*Menu, error) {
 	for _, c := range menus {
 		if c.Name == name {
-			return &c
+			return &c, nil
 		}
 	}
-	return nil
+	return nil, fmt.Errorf("cannot find any object of name: %s", name)
 }
 
 // AddMenu appends new Menu object
 func AddMenu(name, card string) error {
-	// Name of a card must be unique for specyfic user.
+	// Name of a menu must be unique for specyfic user.
 	if !ValidateName(name) {
-		return errors.New("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
+		return errors.New("name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
 	if Find(name) != nil {
 		return errors.New("menu with the name already exists")
@@ -63,7 +64,7 @@ func UpdateMenu(name, card string) error {
 
 func DeleteMenu(name string) error {
 	if len(menus) == 0 {
-		return errors.New("no cards in database")
+		return errors.New("no menus in database")
 	}
 	var index int
 	var found bool

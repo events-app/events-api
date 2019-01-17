@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/events-app/events-api/internal/card"
@@ -13,40 +12,36 @@ import (
 func GetMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
-	menu := card.FindMenu(name)
-	if menu == nil {
-		web.ErrorJSON(w, name+" does not exist", http.StatusNoContent)
+	menu, err := card.FindMenu(name)
+	if err != nil {
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	if err := json.NewEncoder(w).Encode(&menu); err != nil {
-		log.Printf("error: encoding response: %s", err)
-	}
+	web.RespondWithJSON(w, http.StatusOK, menu)
 }
 
 func GetMenus(w http.ResponseWriter, r *http.Request) {
-	menus := card.GetAllMenus()
-	if menus == nil {
-		web.ErrorJSON(w, "no menu objects in database", http.StatusNoContent)
+	menus, err := card.GetAllMenus()
+	if err != nil {
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	if err := json.NewEncoder(w).Encode(&menus); err != nil {
-		log.Printf("error: encoding response: %s", err)
-	}
+	web.RespondWithJSON(w, http.StatusOK, menus)
 }
 
 func AddMenu(w http.ResponseWriter, r *http.Request) {
 	var m card.Menu
 	err := json.NewDecoder(r.Body).Decode(&m)
-
 	if err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	if err = card.Add(m.Name, m.Card); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusConflict)
+	defer r.Body.Close()
+	if err = card.AddMenu(m.Name, m.Card); err != nil {
+		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	w.WriteHeader(http.StatusCreated)
+	web.RespondWithJSON(w, http.StatusCreated, m)
 }
 
 func UpdateMenu(w http.ResponseWriter, r *http.Request) {
@@ -55,23 +50,24 @@ func UpdateMenu(w http.ResponseWriter, r *http.Request) {
 	var m card.Menu
 	err := json.NewDecoder(r.Body).Decode(&m)
 	if err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusInternalServerError)
+		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	defer r.Body.Close()
+	m.Name = name
 	if err = card.UpdateMenu(name, m.Card); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusNotFound)
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
-		// http.Error(w, err.Error(), 404)
 	}
-	w.WriteHeader(http.StatusOK)
+	web.RespondWithJSON(w, http.StatusOK, m)
 }
 
 func DeleteMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	name := params["name"]
 	if err := card.DeleteMenu(name); err != nil {
-		web.ErrorJSON(w, err.Error(), http.StatusNotFound)
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	w.WriteHeader(http.StatusOK)
+	web.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
