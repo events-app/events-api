@@ -17,7 +17,7 @@ var menus = []Menu{
 	Menu{Name: "Other menu", Card: "other"},
 }
 
-// GetAllMenus returns all menus
+// GetAll returns all menus
 func GetAll() (*[]Menu, error) {
 	if len(menus) == 0 {
 		return nil, fmt.Errorf("cannot find any menu object")
@@ -25,7 +25,7 @@ func GetAll() (*[]Menu, error) {
 	return &menus, nil
 }
 
-// FindMenu returns menu object based on name
+// Find returns menu object based on name
 func Find(name string) (*Menu, error) {
 	for _, c := range menus {
 		if c.Name == name {
@@ -35,13 +35,13 @@ func Find(name string) (*Menu, error) {
 	return nil, fmt.Errorf("cannot find a menu named: %s", name)
 }
 
-// AddMenu appends new Menu object
+// Add appends new Menu object
 func Add(name, card string) error {
 	// Name of a menu must be unique for specyfic user.
 	if !ValidateName(name) {
 		return fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
-	if _, err := Find(name); err != nil {
+	if m, _ := Find(name); m != nil {
 		return fmt.Errorf("menu with the name already exists")
 	}
 	menus = append(menus, Menu{Name: name, Card: card})
@@ -49,7 +49,7 @@ func Add(name, card string) error {
 	return nil
 }
 
-// UpdateMenu changes Content object based on name
+// Update changes Content object based on name
 // Returns error if it was not found
 func Update(name, card string) error {
 	for i := range menus {

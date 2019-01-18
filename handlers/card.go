@@ -54,6 +54,7 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+	c.Name = name
 	defer r.Body.Close()
 	if err = card.Update(name, c.Text); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error(), )

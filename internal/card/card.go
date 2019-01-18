@@ -51,7 +51,7 @@ func Add(name, text string) error {
 	if !ValidateName(name) {
 		return fmt.Errorf("Name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
-	if _, err := Find(name); err != nil {
+	if c, _ := Find(name); c != nil {
 		return fmt.Errorf("card with the name already exists")
 	}
 	cards = append(cards, Card{Name: name, Text: text})
