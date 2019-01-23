@@ -547,7 +547,7 @@
 			"name": "Files",
 			"item": [
 				{
-					"name": "http://localhost:8000/api/v1/files",
+					"name": "http://localhost:8000/api/v1/upload",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -570,16 +570,22 @@
 							{
 								"key": "Content-Type",
 								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"file\": \"C:\\\\tmp\\\\accelerated_pac_base.pac\"\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/v1/files",
+							"raw": "http://localhost:8000/api/v1/upload",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -588,7 +594,7 @@
 							"path": [
 								"api",
 								"v1",
-								"files"
+								"upload"
 							]
 						}
 					},
@@ -627,7 +633,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
+							"raw": "http://localhost:8000/files/f1886f3e0d8d8371d699b0d7.png",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -635,7 +641,40 @@
 							"port": "8000",
 							"path": [
 								"files",
-								"103784a3cd2f5329b0974528.png"
+								"f1886f3e0d8d8371d699b0d7.png"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "http://localhost:8000/api/v1/health",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"health"
 							]
 						}
 					},
