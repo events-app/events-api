@@ -2,19 +2,23 @@ package menu
 
 import (
 	"fmt"
+	"math/rand"
+
+	"github.com/events-app/events-api/internal/card"
 )
 
 // Menu holds Name and wired card.
 type Menu struct {
-	Name string `json:"name"`
-	Card string `json:"card"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	CardId int    `json:"cardID"`
 }
 
 // menus stores all the menus
 var menus = []Menu{
-	Menu{Name: "Main menu", Card: "main"},
-	Menu{Name: "Secured", Card: "secured"},
-	Menu{Name: "Other menu", Card: "other"},
+	Menu{ID: 1, Name: "Main menu", CardId: 1},
+	Menu{ID: 2, Name: "Secured", CardId: 2},
+	Menu{ID: 3, Name: "Other menu", CardId: 3},
 }
 
 // GetAll returns all menus
@@ -25,50 +29,63 @@ func GetAll() (*[]Menu, error) {
 	return &menus, nil
 }
 
+// Get menu
+func Get(id int) (*Menu, error) {
+	for _, m := range menus {
+		if m.ID == id {
+			return &m, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot find a menu with ID: %d", id)
+}
+
 // Find returns menu object based on name
 func Find(name string) (*Menu, error) {
-	for _, c := range menus {
-		if c.Name == name {
-			return &c, nil
+	for _, m := range menus {
+		if m.Name == name {
+			return &m, nil
 		}
 	}
 	return nil, fmt.Errorf("cannot find a menu named: %s", name)
 }
 
 // Add appends new Menu object
-func Add(name, card string) error {
+func Add(name string, cardId int) (int, error) {
 	// Name of a menu must be unique for specyfic user.
 	if !ValidateName(name) {
-		return fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
+		return 0, fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
 	if m, _ := Find(name); m != nil {
-		return fmt.Errorf("menu with the name already exists")
+		return 0, fmt.Errorf("menu with the name already exists")
 	}
-	menus = append(menus, Menu{Name: name, Card: card})
+	id := rand.Intn(10000)
+	menus = append(menus, Menu{ID: id, Name: name, CardId: cardId})
 
-	return nil
+	return id, nil
 }
 
-// Update changes Content object based on name
+// Update changes Menu object based on name
 // Returns error if it was not found
-func Update(name, card string) error {
+func Update(id int, name string, cardId int) error {
 	for i := range menus {
-		if menus[i].Name == name {
-			menus[i].Card = card
+		if menus[i].ID == id {
+			menus[i].Name = name
+			menus[i].CardId = cardId
 			return nil
 		}
 	}
-	return fmt.Errorf("menu not found")
+	return fmt.Errorf("menu with id:%d not found", id)
 }
 
-func Delete(name string) error {
+// Delete menu
+func Delete(id int) error {
 	if len(menus) == 0 {
 		return fmt.Errorf("no menus in database")
 	}
 	var index int
 	var found bool
 	for i := range menus {
-		if menus[i].Name == name {
+		if menus[i].ID == id {
 			index = i
 			found = true
 		}
@@ -78,4 +95,18 @@ func Delete(name string) error {
 	}
 	menus = append(menus[:index], menus[index+1:]...)
 	return nil
+}
+
+// GetCardOfMenu returns card of menu
+func GetCardOfMenu(id int) (*card.Card, error) {
+	for _, m := range menus {
+		if m.ID == id {
+			c, err := card.Get(m.CardId)
+			if err != nil {
+				return nil, fmt.Errorf("cannot any card connected to the menu")
+			}
+			return c, nil
+		}
+	}
+	return nil, fmt.Errorf("cannot find a menu with ID: %d", id)
 }

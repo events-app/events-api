@@ -48,11 +48,13 @@ func main() {
 
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
 
-	r.HandleFunc("/api/v1/menus/{name}", handlers.GetMenu).Methods("GET")
+	r.HandleFunc("/api/v1/menus/{id}", handlers.GetMenu).Methods("GET")
 	r.HandleFunc("/api/v1/menus", handlers.GetMenus).Methods("GET")
 	r.HandleFunc("/api/v1/menus", handlers.AddMenu).Methods("POST")
-	r.HandleFunc("/api/v1/menus/{name}", handlers.UpdateMenu).Methods("PUT")
-	r.HandleFunc("/api/v1/menus/{name}", handlers.DeleteMenu).Methods("DELETE")
+	r.HandleFunc("/api/v1/menus/{id}", handlers.UpdateMenu).Methods("PUT")
+	r.HandleFunc("/api/v1/menus/{id}", handlers.DeleteMenu).Methods("DELETE")
+	r.HandleFunc("/api/v1/menus/{id}/cards", handlers.GetCardOfMenu).Methods("GET")
+
 	r.HandleFunc("/api/v1/upload", handlers.UploadFile(uploadPath, maxUploadSize)).Methods("POST")
 
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
