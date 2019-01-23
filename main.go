@@ -40,11 +40,11 @@ func main() {
 		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
 	)).Methods("GET")
 
-	r.HandleFunc("/api/v1/cards/{name}", handlers.GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/cards/{id}", handlers.GetCard).Methods("GET")
 	r.HandleFunc("/api/v1/cards", handlers.GetCards).Methods("GET")
 	r.HandleFunc("/api/v1/cards", handlers.AddCard).Methods("POST")
-	r.HandleFunc("/api/v1/cards/{name}", handlers.UpdateCard).Methods("PUT")
-	r.HandleFunc("/api/v1/cards/{name}", handlers.DeleteCard).Methods("DELETE")
+	r.HandleFunc("/api/v1/cards/{id}", handlers.UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/cards/{id}", handlers.DeleteCard).Methods("DELETE")
 
 	r.HandleFunc("/api/v1/login", Login).Methods("POST")
 

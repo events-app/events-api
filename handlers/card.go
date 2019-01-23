@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/events-app/events-api/internal/card"
 	"github.com/events-app/events-api/internal/platform/web"
@@ -11,8 +12,12 @@ import (
 
 func GetCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	name := params["name"]
-	c, err := card.Find(name)
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		web.RespondWithError(w, http.StatusBadRequest, "invalid card ID")
+		return
+	}
+	c, err := card.Get(id)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
@@ -32,13 +37,13 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 func AddCard(w http.ResponseWriter, r *http.Request) {
 	var c card.Card
 	err := json.NewDecoder(r.Body).Decode(&c)
-
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	if err = card.Add(c.Name, c.Text); err != nil {
+	c.ID, err = card.Add(c.Name, c.Text)
+	if err != nil {
 		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
@@ -47,17 +52,21 @@ func AddCard(w http.ResponseWriter, r *http.Request) {
 
 func UpdateCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	name := params["name"]
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		web.RespondWithError(w, http.StatusBadRequest, "invalid card ID")
+		return
+	}
 	var c card.Card
-	err := json.NewDecoder(r.Body).Decode(&c)
+	err = json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.Name = name
 	defer r.Body.Close()
-	if err = card.Update(name, c.Text); err != nil {
-		web.RespondWithError(w, http.StatusNotFound, err.Error(), )
+	c.ID = id
+	if err = card.Update(id, c.Name, c.Text); err != nil {
+		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 		// http.Error(w, err.Error(), 404)
 	}
@@ -66,8 +75,13 @@ func UpdateCard(w http.ResponseWriter, r *http.Request) {
 
 func DeleteCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	name := params["name"]
-	if err := card.Delete(name); err != nil {
+	id, err := strconv.Atoi(params["id"])
+	if err != nil {
+		web.RespondWithError(w, http.StatusBadRequest, "invalid card ID")
+		return
+	}
+
+	if err := card.Delete(id); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}

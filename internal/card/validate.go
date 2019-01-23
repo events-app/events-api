@@ -2,6 +2,7 @@ package card
 
 import "regexp"
 
+// ValidateName checks if a name of a card is correct
 func ValidateName(text string) (b bool) {
 	if text == "" {
 		return false
