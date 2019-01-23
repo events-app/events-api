@@ -6,657 +6,635 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:8000/api/v1/login",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/x-www-form-urlencoded",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/login",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/login",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
-				},
-				"url": {
-					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/login?",
-					"protocol": "https",
-					"host": [
-						"mirek-mockapi",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"login"
-					],
-					"query": [
-						{
-							"key": "username",
-							"value": "admin",
-							"disabled": true
+			"name": "Card",
+			"item": [
+				{
+					"name": "http://localhost:8000/api/v1/cards/secured",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+									"type": "string"
+								}
+							]
 						},
-						{
-							"key": "password",
-							"value": "admin",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/cards/secured",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards/secured",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards",
-						"secured"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/cards/main",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards/other",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards",
-						"other"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/files",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"type": "text",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"file\": \"C:\\\\tmp\\\\accelerated_pac_base.pac\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/files",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"files"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/cards/other",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"text\": \"bla bla bla\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards/other",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards",
-						"other"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/files/",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/files/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"files",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"files",
-						"103784a3cd2f5329b0974528.png"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/menus",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
-					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\": \"new\",\n    \"text\": \"bla bla bla\"\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://localhost:8000/api/v1/login",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
-				},
-				"url": {
-					"raw": "https://localhost:8000/api/v1/login?",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"login"
-					],
-					"query": [
-						{
-							"key": "username",
-							"value": "admin",
-							"disabled": true
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
-						{
-							"key": "password",
-							"value": "admin",
-							"disabled": true
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards/secured",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards",
+								"secured"
+							]
 						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/cards/main",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards/main",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards",
-						"main"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/cards/new23",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/cards/new23",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"cards",
-						"new23"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
-					"protocol": "https",
-					"host": [
-						"mirek-mockapi",
-						"herokuapp",
-						"com"
-					],
-					"path": [
-						"api",
-						"v1",
-						"content",
-						"main"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/menus/new111",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
 					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"card\": \"bla bla bla 3\"\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/menus/new111",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"menus",
-						"new111"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/v1/menus",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
-							"type": "string"
+				{
+					"name": "http://localhost:8000/api/v1/cards/3",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"other3\",\n    \"text\": \"bla bla bla\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards",
+								"3"
+							]
 						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
-						"type": "text",
-						"disabled": true
 					},
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"name\": \"new111\",\n    \"card\": \"bla bla bla\"\n}"
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/menus",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"menus"
-					]
+				{
+					"name": "http://localhost:8000/api/v1/cards/2",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/api/v1/cards",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/api/v1/cards/3",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards/new23",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards",
+								"new23"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
+							"protocol": "https",
+							"host": [
+								"mirek-mockapi",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"api",
+								"v1",
+								"content",
+								"main"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/api/v1/cards",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"new111card\",\n    \"text\": \"bla bla bla card\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "http://localhost:8000/api/v1/menus",
-			"request": {
-				"auth": {
-					"type": "noauth"
+			"name": "Menu",
+			"item": [
+				{
+					"name": "http://localhost:8000/api/v1/menus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"new\",\n    \"text\": \"bla bla bla\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/cards",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"cards"
+							]
+						}
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+				{
+					"name": "http://localhost:8000/api/v1/menus/new111",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"card\": \"bla bla bla 3\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/menus/new111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"menus",
+								"new111"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/menus",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"menus"
-					]
+				{
+					"name": "http://localhost:8000/api/v1/menus",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"new111\",\n    \"card\": \"bla bla bla\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/menus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/api/v1/menus",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/menus",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"menus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/api/v1/menus/Main menu",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/menus/Main menu",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"menus",
+								"Main menu"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "http://localhost:8000/api/v1/menus/Main menu",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/v1/menus/Main menu",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"v1",
-						"menus",
-						"Main menu"
-					]
+			"name": "Login",
+			"item": [
+				{
+					"name": "http://localhost:8000/api/v1/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "http://localhost:8000/api/v1/files",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDI3MDU1NjEsInVzZXJuYW1lIjoiYWRtaW4ifQ.Bny8TGbD2BEtfHSCruBveggFvsPEfiUOHoa_pzz6gnwklfdsafjsadfasdfag",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NDIzNzQ1MDksInVzZXJuYW1lIjoiYWRtaW4ifQ.1rBzxa28N4CXGktQZvxbVppbXoDyGIklsjN3IKFSZpM",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"file\": \"C:\\\\tmp\\\\accelerated_pac_base.pac\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/files",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"files"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/files/",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/files/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"files",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:8000/files/103784a3cd2f5329b0974528.png",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"files",
+								"103784a3cd2f5329b0974528.png"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
