@@ -12,6 +12,7 @@ import (
 	"github.com/events-app/events-api/handlers"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 const key = "KLHkjhsd*h67r3gJhjuds"
@@ -77,7 +78,12 @@ func main() {
 		port = serverPort
 	}
 	log.Println("Listening on port", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), r); err != nil {
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		// AllowedMethods: []string{"GET", "POST", "PATCH"},
+		// AllowedHeaders: []string{"Bearer", "Content-Type"}
+	})
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), c.Handler(r)); err != nil {
 		log.Printf("error: listing and serving: %s", err)
 		return
 	}
