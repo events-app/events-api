@@ -22,11 +22,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !user.ValidateUsername(u.Username) {
-		web.RespondWithError(w, http.StatusBadRequest, "Username is invalid")
+		web.RespondWithError(w, http.StatusUnauthorized, "Username is invalid")
 		return
 	}
 	if u.Username != "admin" || u.Password != "admin" {
-		web.RespondWithError(w, http.StatusBadRequest, "Username or password is invalid")
+		web.RespondWithError(w, http.StatusUnauthorized, "Username or password is invalid")
 		return
 	}
 	// set token expiration to 15 minutes
@@ -37,7 +37,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 	tokenString, err := token.SignedString([]byte(key))
 	if err != nil {
-		web.RespondWithError(w, http.StatusBadRequest, err.Error())
+		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	web.RespondWithJSON(w, http.StatusOK,
