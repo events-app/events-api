@@ -1,0 +1,6 @@
+jwt-key: "KLHkjhsd*h67r3gJhjuds"
+upload:
+  max-file-size: 2097152  # 2 * 1048576 bytes = 2 mb
+  path: "./uploaded-files"
+
+server-port: "8000"

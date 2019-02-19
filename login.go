@@ -9,6 +9,7 @@ import (
 	"github.com/events-app/events-api/internal/platform/auth"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/events-app/events-api/internal/user"
+	"github.com/spf13/viper"
 )
 
 // TODO: move Login to handlers and JWT to auth
@@ -35,7 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		"username": u.Username,
 		"exp":      expireToken,
 	})
-	tokenString, err := token.SignedString([]byte(key))
+	tokenString, err := token.SignedString([]byte(viper.GetString("jwt-key")))
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/spf13/viper"
+
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
@@ -15,18 +17,18 @@ import (
 	"github.com/rs/cors"
 )
 
-const key = "KLHkjhsd*h67r3gJhjuds"
-const maxUploadSize = 2 * 1048576 // bytes = 2 mb
-const uploadPath = "./uploaded-files"
-const serverPort = "8000"
-
 func main() {
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig() // Find and read the config file
+	if err != nil {             // Handle errors reading the config file
+		panic(fmt.Errorf("fatal error config file: %s\n", err))
+	}
 	r := mux.NewRouter()
 	// use middleware handler
 	r.Use(handlers.HeaderMiddleware)
 	jwtMiddleware := jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte(key), nil
+			return []byte(viper.GetString("jwt-key")), nil
 		},
 		SigningMethod: jwt.SigningMethodHS256,
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, errMessage string) {
@@ -56,13 +58,15 @@ func main() {
 	r.HandleFunc("/api/v1/menus/{id}", handlers.DeleteMenu).Methods("DELETE")
 	r.HandleFunc("/api/v1/menus/{id}/cards", handlers.GetCardOfMenu).Methods("GET")
 
-	r.HandleFunc("/api/v1/upload", handlers.UploadFile(uploadPath, maxUploadSize)).Methods("POST")
+	r.HandleFunc("/api/v1/upload", handlers.UploadFile(
+		viper.GetString("upload.path"),
+		viper.GetInt64("upload.max-file-size"))).Methods("POST")
 
 	// r.PathPrefix("/files/").Handler(http.FileServer(http.Dir(uploadPath)))
-	fs := http.FileServer(http.Dir(uploadPath))
+	fs := http.FileServer(http.Dir(viper.GetString("upload.path")))
 	// --- r.PathPrefix("/files/").Handler(http.StripPrefix("files/", fs))
 	// r.Handle("/files", http.StripPrefix("/files", fs)).Methods("GET")
-	r.HandleFunc("/files", handlers.GetFiles(uploadPath)).Methods("GET")
+	r.HandleFunc("/files", handlers.GetFiles(viper.GetString("upload.path"))).Methods("GET")
 	r.Handle("/files/{file}", http.StripPrefix("/files", fs)).Methods("GET")
 	// http.Handle("/files/", http.StripPrefix("/files", fs))
 
@@ -75,7 +79,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = serverPort
+		port = viper.GetString("server-port")
 	}
 	log.Println("Listening on port", port)
 	c := cors.New(cors.Options{
