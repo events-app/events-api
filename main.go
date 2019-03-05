@@ -49,7 +49,7 @@ func main() {
 	r.HandleFunc("/api/v1/cards/{id}", handlers.UpdateCard).Methods("PUT")
 	r.HandleFunc("/api/v1/cards/{id}", handlers.DeleteCard).Methods("DELETE")
 
-	r.HandleFunc("/api/v1/login", Login).Methods("POST")
+	r.HandleFunc("/api/v1/login", handlers.Login).Methods("POST")
 
 	r.HandleFunc("/api/v1/menus/{id}", handlers.GetMenu).Methods("GET")
 	r.HandleFunc("/api/v1/menus", handlers.GetMenus).Methods("GET")
