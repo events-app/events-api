@@ -1,8 +1,7 @@
 package auth
 
 type JwtToken struct {
-	Token   string `json:"token"`
-	Expires int64  `json:"expiration_date"`
+	Token string `json:"token"`
 }
 
 type Exception struct {

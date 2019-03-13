@@ -47,7 +47,7 @@ func Upload(file io.Reader, path string, realName string) (*File, error) {
 	}
 	defer newFile.Close() // idempotent, okay to call twice
 	if _, err := newFile.Write(fileBytes); err != nil || newFile.Close() != nil {
-		return nil, fmt.Errorf("canot write file")
+		return nil, fmt.Errorf("cannot write file")
 	}
 	return &File{realName, fileName + fileEndings[0]}, nil
 }
