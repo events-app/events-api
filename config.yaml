@@ -4,3 +4,9 @@ upload:
   path: "./uploaded-files"
 
 server-port: "8000"
+database:
+    scheme:   "postgres"
+    user:     "postgres"
+    password: "postgres"
+		host:     "localhost"
+		path:     "postgres"
