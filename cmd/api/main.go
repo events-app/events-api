@@ -8,21 +8,70 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/auth0/go-jwt-middleware"
+	jwtmiddleware "github.com/auth0/go-jwt-middleware"
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/events-app/events-api/handlers"
+	"github.com/events-app/events-api/cmd/api/handlers"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+	// "github.com/events-app/events-api/internal/schema"
+	// "github.com/jmoiron/sqlx"
+	// _ "github.com/lib/pq"
 )
 
 func main() {
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig() // Find and read the config file
 	if err != nil {             // Handle errors reading the config file
-		panic(fmt.Errorf("fatal error config file: %s\n", err))
+		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
+
+	// DB
+	// q := url.Values{}
+	// q.Set("sslmode", "disable")
+	// q.Set("timezone", "utc")
+
+	// u := url.URL{
+	// 	Scheme:   viper.GetString("database.scheme"),
+	// 	User:     url.UserPassword(
+	// 		viper.GetString("database.username"),
+	// 		viper.GetString("database.password"),
+	// 	),
+	// 	Host:     viper.GetString("database.host"),
+	// 	Path:     viper.GetString("database.path"),
+	// 	RawQuery: q.Encode(),
+	// }
+
+	// db, err := sqlx.Open("postgres", u.String())
+	// // Initialize dependencies.
+
+	// if err != nil {
+	// 	log.Fatalf("error: connecting to db: %s", err)
+	// }
+	// defer db.Close()
+
+	// switch flag.Arg(0) {
+	// case "migrate":
+	// 	if err := schema.Migrate(db); err != nil {
+	// 		log.Println("error applying migrations", err)
+	// 		os.Exit(1)
+	// 	}
+	// 	log.Println("Migrations complete")
+	// 	return
+
+	// case "seed":
+	// 	if err := schema.Seed(db); err != nil {
+	// 		log.Println("error seeding database", err)
+	// 		os.Exit(1)
+	// 	}
+	// 	log.Println("Seed data complete")
+	// 	return
+	// }
+
+	// service := Products{db: db}
+
+	// Router
 	r := mux.NewRouter()
 	// use middleware handler
 	r.Use(handlers.HeaderMiddleware)
