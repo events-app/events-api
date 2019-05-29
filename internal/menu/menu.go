@@ -2,111 +2,132 @@ package menu
 
 import (
 	"fmt"
-	"math/rand"
+	"time"
 
 	"github.com/events-app/events-api/internal/card"
+
+	"github.com/jmoiron/sqlx"
+	"github.com/pkg/errors"
 )
 
 // Menu holds Name and wired card.
 type Menu struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	CardId int    `json:"cardID"`
-}
-
-// menus stores all the menus
-var menus = []Menu{
-	Menu{ID: 1, Name: "Main menu", CardId: 1},
-	Menu{ID: 2, Name: "Secured", CardId: 2},
-	Menu{ID: 3, Name: "Other menu", CardId: 3},
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	CardID      int       `db:"card_id" json:"cardID"`
+	DateCreated time.Time `db:"created" json:"dateCreated"`
+	DateUpdated time.Time `db:"updated" json:"dateUpdated"`
 }
 
 // GetAll returns all menus
-func GetAll() (*[]Menu, error) {
-	if len(menus) == 0 {
-		return nil, fmt.Errorf("cannot find any menu object")
+func GetAll(db *sqlx.DB) ([]Menu, error) {
+	var menus []Menu
+	const q = `SELECT * FROM menu`
+	if err := db.Select(&menus, q); err != nil {
+		return nil, errors.Wrap(err, "selecting menus")
 	}
-	return &menus, nil
+	return menus, nil
 }
 
 // Get menu
-func Get(id int) (*Menu, error) {
-	for _, m := range menus {
-		if m.ID == id {
-			return &m, nil
-		}
+func Get(db *sqlx.DB, id int) (*Menu, error) {
+	var menu Menu
+	const q = `SELECT * FROM menu WHERE id = $1`
+	if err := db.Get(&menu, q, id); err != nil {
+		return nil, errors.Wrap(err, "selecting single menu")
 	}
-	return nil, fmt.Errorf("cannot find a menu with ID: %d", id)
+	return &menu, nil
 }
 
 // Find returns menu object based on name
-func Find(name string) (*Menu, error) {
-	for _, m := range menus {
-		if m.Name == name {
-			return &m, nil
-		}
+func Find(db *sqlx.DB, name string) (*Menu, error) {
+	var menu Menu
+	const q = `SELECT * FROM menu WHERE name = $1`
+	if err := db.Get(&menu, q, name); err != nil {
+		return nil, errors.Wrap(err, "finding single menu")
 	}
-	return nil, fmt.Errorf("cannot find a menu named: %s", name)
+	return &menu, nil
 }
 
 // Add appends new Menu object
-func Add(name string, cardId int) (int, error) {
+func Add(db *sqlx.DB, name string, cardID int, now time.Time) (*Menu, error) {
 	// Name of a menu must be unique for specyfic user.
 	if !ValidateName(name) {
-		return 0, fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
+		return nil, fmt.Errorf("name should be 4-30 characters long and should consists of letters, numbers, -, _")
 	}
-	if m, _ := Find(name); m != nil {
-		return 0, fmt.Errorf("menu with the name already exists")
+	// menu name must be unique
+	if m, _ := Find(db, name); m != nil {
+		return nil, fmt.Errorf("menu with the name already exists")
 	}
-	id := rand.Intn(10000)
-	menus = append(menus, Menu{ID: id, Name: name, CardId: cardId})
+	menu := Menu{
+		Name:        name,
+		CardID:      cardID,
+		DateCreated: now.UTC(),
+		DateUpdated: now.UTC(),
+	}
+	const q = `
+		INSERT INTO menu
+		(name, card_id, created, updated)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id`
 
-	return id, nil
+	rows, err := db.Query(q, menu.Name, menu.CardID, menu.DateCreated, menu.DateUpdated)
+	if err != nil {
+		return nil, errors.Wrap(err, "inserting menu")
+	}
+	var id int
+	if rows.Next() {
+		rows.Scan(&id)
+	}
+	menu.ID = id
+
+	return &menu, nil
 }
 
 // Update changes Menu object based on name
 // Returns error if it was not found
-func Update(id int, name string, cardId int) error {
-	for i := range menus {
-		if menus[i].ID == id {
-			menus[i].Name = name
-			menus[i].CardId = cardId
-			return nil
-		}
+func Update(db *sqlx.DB, id int, name string, cardID int, now time.Time) error {
+	menu, err := Get(db, id)
+	if err != nil {
+		return err
 	}
-	return fmt.Errorf("menu with id:%d not found", id)
-}
+	menu.Name = name
+	menu.CardID = cardID
+	menu.DateUpdated = now
+	const q = `
+		UPDATE menu SET
+			name = $2,
+			card_id = $3,
+			updated = $4
+		WHERE
+			id = $1`
+	_, err = db.Exec(q, id, menu.Name, menu.CardID, menu.DateUpdated)
 
-// Delete menu
-func Delete(id int) error {
-	if len(menus) == 0 {
-		return fmt.Errorf("no menus in database")
+	if err != nil {
+		return errors.Wrap(err, "updating menu")
 	}
-	var index int
-	var found bool
-	for i := range menus {
-		if menus[i].ID == id {
-			index = i
-			found = true
-		}
-	}
-	if !found {
-		return fmt.Errorf("menu not found")
-	}
-	menus = append(menus[:index], menus[index+1:]...)
+
 	return nil
 }
 
-// GetCardOfMenu returns card of menu
-func GetCardOfMenu(id int) (*card.Card, error) {
-	for _, m := range menus {
-		if m.ID == id {
-			c, err := card.Get(m.CardId)
-			if err != nil {
-				return nil, fmt.Errorf("cannot any card connected to the menu")
-			}
-			return c, nil
-		}
+// Delete menu
+func Delete(db *sqlx.DB, id int) error {
+	const q = `DELETE FROM menu WHERE id = $1`
+	if _, err := db.Exec(q, id); err != nil {
+		return errors.Wrapf(err, "deleting menu %d", id)
 	}
-	return nil, fmt.Errorf("cannot find a menu with ID: %d", id)
+
+	return nil
+}
+
+// GetCardOfMenu returns card which is assigned to the specific menu
+func GetCardOfMenu(db *sqlx.DB, id int) (*card.Card, error) {
+	var card card.Card
+	const q = `SELECT * 
+				FROM card 
+				WHERE id = (SELECT card_id FROM menu WHERE id = $1)`
+	if err := db.Get(&card, q, id); err != nil {
+		return nil, errors.Wrap(err, "selecting card")
+	}
+	return &card, nil
 }

@@ -4,29 +4,39 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/events-app/events-api/internal/card"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func GetCard(w http.ResponseWriter, r *http.Request) {
+// Cards defines all of the handlers related to cards.
+// It holds the apllication state needed by the handler method.
+type Cards struct {
+	DB *sqlx.DB
+}
+// GetCard gets all cards from the service layer encodes them for the
+// client response
+func (c *Cards) GetCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid card ID")
 		return
 	}
-	c, err := card.Get(id)
+	ca, err := card.Get(c.DB, id)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, c)
+	web.RespondWithJSON(w, http.StatusOK, ca)
 }
 
-func GetCards(w http.ResponseWriter, r *http.Request) {
-	cards, err := card.GetAll()
+func (c *Cards) GetCards(w http.ResponseWriter, r *http.Request) {
+	cards, err := card.GetAll(c.DB)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
@@ -34,46 +44,46 @@ func GetCards(w http.ResponseWriter, r *http.Request) {
 	web.RespondWithJSON(w, http.StatusOK, cards)
 }
 
-func AddCard(w http.ResponseWriter, r *http.Request) {
-	var c card.Card
-	err := json.NewDecoder(r.Body).Decode(&c)
+func (c *Cards) AddCard(w http.ResponseWriter, r *http.Request) {
+	var ca *card.Card
+	err := json.NewDecoder(r.Body).Decode(&ca)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	c.ID, err = card.Add(c.Name, c.Text)
+	ca, err = card.Add(c.DB, ca.Name, ca.Text, time.Now())
 	if err != nil {
 		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusCreated, c)
+	web.RespondWithJSON(w, http.StatusCreated, ca)
 }
 
-func UpdateCard(w http.ResponseWriter, r *http.Request) {
+func (c *Cards)UpdateCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid card ID")
 		return
 	}
-	var c card.Card
-	err = json.NewDecoder(r.Body).Decode(&c)
+	var ca *card.Card
+	err = json.NewDecoder(r.Body).Decode(&ca)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	c.ID = id
-	if err = card.Update(id, c.Name, c.Text); err != nil {
+	ca.ID = id
+	if err = card.Update(c.DB, id, ca.Name, ca.Text, time.Now()); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 		// http.Error(w, err.Error(), 404)
 	}
-	web.RespondWithJSON(w, http.StatusOK, c)
+	web.RespondWithJSON(w, http.StatusOK, ca)
 }
 
-func DeleteCard(w http.ResponseWriter, r *http.Request) {
+func (c *Cards)DeleteCard(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
@@ -81,7 +91,7 @@ func DeleteCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := card.Delete(id); err != nil {
+	if err := card.Delete(c.DB, id); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}

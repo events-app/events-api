@@ -1,12 +1,17 @@
 package user
 
-import "regexp"
+import (
+	"regexp"
+	"time"
+)
 
 type User struct {
-	ID       int    `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	ID          int       `json:"id"`
+	Username    string    `json:"username"`
+	Password    string    `json:"password"`
+	Role        string    `json:"role"`
+	DateCreated time.Time `db:"created" json:"dateCreated"`
+	DateUpdated time.Time `db:"updated" json:"dateUpdated"`
 }
 
 // get users from DB

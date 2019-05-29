@@ -7,11 +7,11 @@ import (
 	"github.com/events-app/events-api/internal/platform/web"
 )
 
-func SecuredContent(w http.ResponseWriter, r *http.Request) {
-	c, err := card.Find("secured")
+func (c *Cards) SecuredContent(w http.ResponseWriter, r *http.Request) {
+	ca, err := card.Find(c.DB, "secured")
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, c)
+	web.RespondWithJSON(w, http.StatusOK, ca)
 }

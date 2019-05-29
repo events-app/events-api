@@ -14,7 +14,7 @@ package schema
 // may need to be broken up.
 
 const seeds = `
-INSERT INTO card (name, text, created) VALUES 
+INSERT INTO card (name, text, created, updated) VALUES 
 	('main', '# The New Event
 
 	The New Event is the best event ever.
@@ -24,16 +24,16 @@ INSERT INTO card (name, text, created) VALUES
 	+ Come
 	+ Have fun
 	
-	We are waiting for you!', '2019-05-26 00:00:02.000001+00'),
-	('secured', 'You are allowed to see this.', '2019-05-26 00:00:02.000001+00'),
-	('other', 'Other content', '2019-05-26 00:00:02.000001+00'),
-	('other2','Other content 2', '2019-05-26 00:00:02.000001+00')
+	We are waiting for you!', '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00'),
+	('secured', 'You are allowed to see this.', '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00'),
+	('other', 'Other content', '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00'),
+	('other2','Other content 2', '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00')
 	ON CONFLICT DO NOTHING;
 
-INSERT INTO menu (name, card_id, created) VALUES
-	('Main menu', 1, '2019-05-26 00:00:02.000001+00'),
-	('Secured', 2, '2019-05-26 00:00:02.000001+00'),
-	('Other menu', 3, '2019-05-26 00:00:02.000001+00')
+INSERT INTO menu (name, card_id, created, updated) VALUES
+	('Main menu', 1, '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00'),
+	('Secured', 2, '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00'),
+	('Other menu', 3, '2019-05-26 00:00:02.000001+00', '2019-05-26 00:00:02.000001+00')
 	ON CONFLICT DO NOTHING;
 `
 

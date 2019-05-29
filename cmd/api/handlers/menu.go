@@ -4,29 +4,40 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/events-app/events-api/internal/menu"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
+
+	"github.com/jmoiron/sqlx"
 )
 
-func GetMenu(w http.ResponseWriter, r *http.Request) {
+// Menus defines all of the handlers related to menus.
+// It holds the apllication state needed by the handler method.
+type Menus struct {
+	DB *sqlx.DB
+}
+
+// GetMenu gets all menus from the service layer encodes them for the
+// client response
+func (m *Menus) GetMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid menu ID")
 		return
 	}
-	m, err := menu.Get(id)
+	me, err := menu.Get(m.DB, id)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, m)
+	web.RespondWithJSON(w, http.StatusOK, me)
 }
 
-func GetMenus(w http.ResponseWriter, r *http.Request) {
-	menus, err := menu.GetAll()
+func (m *Menus) GetMenus(w http.ResponseWriter, r *http.Request) {
+	menus, err := menu.GetAll(m.DB)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
@@ -34,69 +45,69 @@ func GetMenus(w http.ResponseWriter, r *http.Request) {
 	web.RespondWithJSON(w, http.StatusOK, menus)
 }
 
-func AddMenu(w http.ResponseWriter, r *http.Request) {
-	var m menu.Menu
-	err := json.NewDecoder(r.Body).Decode(&m)
+func (m *Menus) AddMenu(w http.ResponseWriter, r *http.Request) {
+	var me *menu.Menu
+	err := json.NewDecoder(r.Body).Decode(&me)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	m.ID, err = menu.Add(m.Name, m.CardId)
+	me, err = menu.Add(m.DB, me.Name, me.CardID, time.Now())
 	if err != nil {
 		web.RespondWithError(w, http.StatusConflict, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusCreated, m)
+	web.RespondWithJSON(w, http.StatusCreated, me)
 }
 
-func UpdateMenu(w http.ResponseWriter, r *http.Request) {
+func (m *Menus) UpdateMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid menu ID")
 		return
 	}
-	var m menu.Menu
-	err = json.NewDecoder(r.Body).Decode(&m)
+	var me *menu.Menu
+	err = json.NewDecoder(r.Body).Decode(&me)
 	if err != nil {
 		web.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 	defer r.Body.Close()
-	m.ID = id
-	if err = menu.Update(id, m.Name, m.CardId); err != nil {
+	me.ID = id
+	if err = menu.Update(m.DB, id, me.Name, me.CardID, time.Now()); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, m)
+	web.RespondWithJSON(w, http.StatusOK, me)
 }
 
-func DeleteMenu(w http.ResponseWriter, r *http.Request) {
+func (m *Menus) DeleteMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid menu ID")
 		return
 	}
-	if err := menu.Delete(id); err != nil {
+	if err := menu.Delete(m.DB, id); err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
 	web.RespondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
-func GetCardOfMenu(w http.ResponseWriter, r *http.Request) {
+func (m *Menus) GetCardOfMenu(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, err := strconv.Atoi(params["id"])
 	if err != nil {
 		web.RespondWithError(w, http.StatusBadRequest, "invalid menu ID")
 		return
 	}
-	m, err := menu.GetCardOfMenu(id)
+	me, err := menu.GetCardOfMenu(m.DB, id)
 	if err != nil {
 		web.RespondWithError(w, http.StatusNotFound, err.Error())
 		return
 	}
-	web.RespondWithJSON(w, http.StatusOK, m)
+	web.RespondWithJSON(w, http.StatusOK, me)
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/codegangsta/negroni"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/events-app/events-api/cmd/api/handlers"
+	"github.com/events-app/events-api/internal/platform/database"
 	"github.com/events-app/events-api/internal/platform/web"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -28,48 +29,15 @@ func main() {
 	}
 
 	// DB
-	// q := url.Values{}
-	// q.Set("sslmode", "disable")
-	// q.Set("timezone", "utc")
+	// Initialize dependencies.
+	db, err := database.Open()
+	if err != nil {
+		log.Fatalf("error: connecting to db: %s", err)
+	}
+	defer db.Close()
 
-	// u := url.URL{
-	// 	Scheme:   viper.GetString("database.scheme"),
-	// 	User:     url.UserPassword(
-	// 		viper.GetString("database.username"),
-	// 		viper.GetString("database.password"),
-	// 	),
-	// 	Host:     viper.GetString("database.host"),
-	// 	Path:     viper.GetString("database.path"),
-	// 	RawQuery: q.Encode(),
-	// }
-
-	// db, err := sqlx.Open("postgres", u.String())
-	// // Initialize dependencies.
-
-	// if err != nil {
-	// 	log.Fatalf("error: connecting to db: %s", err)
-	// }
-	// defer db.Close()
-
-	// switch flag.Arg(0) {
-	// case "migrate":
-	// 	if err := schema.Migrate(db); err != nil {
-	// 		log.Println("error applying migrations", err)
-	// 		os.Exit(1)
-	// 	}
-	// 	log.Println("Migrations complete")
-	// 	return
-
-	// case "seed":
-	// 	if err := schema.Seed(db); err != nil {
-	// 		log.Println("error seeding database", err)
-	// 		os.Exit(1)
-	// 	}
-	// 	log.Println("Seed data complete")
-	// 	return
-	// }
-
-	// service := Products{db: db}
+	cardsHandler := handlers.Cards{DB: db}
+	menusHandler := handlers.Menus{DB: db}
 
 	// Router
 	r := mux.NewRouter()
@@ -89,23 +57,23 @@ func main() {
 	r.HandleFunc("/api/v1/health", handlers.HealthCheck).Methods("GET")
 	r.Handle("/api/v1/cards/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
+		negroni.Wrap(http.HandlerFunc(cardsHandler.SecuredContent)),
 	)).Methods("GET")
 
-	r.HandleFunc("/api/v1/cards/{id}", handlers.GetCard).Methods("GET")
-	r.HandleFunc("/api/v1/cards", handlers.GetCards).Methods("GET")
-	r.HandleFunc("/api/v1/cards", handlers.AddCard).Methods("POST")
-	r.HandleFunc("/api/v1/cards/{id}", handlers.UpdateCard).Methods("PUT")
-	r.HandleFunc("/api/v1/cards/{id}", handlers.DeleteCard).Methods("DELETE")
+	r.HandleFunc("/api/v1/cards/{id}", cardsHandler.GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/cards", cardsHandler.GetCards).Methods("GET")
+	r.HandleFunc("/api/v1/cards", cardsHandler.AddCard).Methods("POST")
+	r.HandleFunc("/api/v1/cards/{id}", cardsHandler.UpdateCard).Methods("PUT")
+	r.HandleFunc("/api/v1/cards/{id}", cardsHandler.DeleteCard).Methods("DELETE")
 
 	r.HandleFunc("/api/v1/login", handlers.Login).Methods("POST")
 
-	r.HandleFunc("/api/v1/menus/{id}", handlers.GetMenu).Methods("GET")
-	r.HandleFunc("/api/v1/menus", handlers.GetMenus).Methods("GET")
-	r.HandleFunc("/api/v1/menus", handlers.AddMenu).Methods("POST")
-	r.HandleFunc("/api/v1/menus/{id}", handlers.UpdateMenu).Methods("PUT")
-	r.HandleFunc("/api/v1/menus/{id}", handlers.DeleteMenu).Methods("DELETE")
-	r.HandleFunc("/api/v1/menus/{id}/cards", handlers.GetCardOfMenu).Methods("GET")
+	r.HandleFunc("/api/v1/menus/{id}", menusHandler.GetMenu).Methods("GET")
+	r.HandleFunc("/api/v1/menus", menusHandler.GetMenus).Methods("GET")
+	r.HandleFunc("/api/v1/menus", menusHandler.AddMenu).Methods("POST")
+	r.HandleFunc("/api/v1/menus/{id}", menusHandler.UpdateMenu).Methods("PUT")
+	r.HandleFunc("/api/v1/menus/{id}", menusHandler.DeleteMenu).Methods("DELETE")
+	r.HandleFunc("/api/v1/menus/{id}/cards", menusHandler.GetCardOfMenu).Methods("GET")
 
 	r.HandleFunc("/api/v1/upload", handlers.UploadFile(
 		viper.GetString("upload.path"),
@@ -122,9 +90,9 @@ func main() {
 	// temporary handlers for backward compatibility with frontend
 	r.Handle("/api/v1/content/secured", negroni.New(
 		negroni.HandlerFunc(jwtMiddleware.HandlerWithNext),
-		negroni.Wrap(http.HandlerFunc(handlers.SecuredContent)),
+		negroni.Wrap(http.HandlerFunc(cardsHandler.SecuredContent)),
 	)).Methods("GET")
-	r.HandleFunc("/api/v1/content/{name}", handlers.GetCard).Methods("GET")
+	r.HandleFunc("/api/v1/content/{name}", cardsHandler.GetCard).Methods("GET")
 
 	port := os.Getenv("PORT")
 	if port == "" {
