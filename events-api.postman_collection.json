@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "98ac04e2-d73a-4800-aba6-259f748bfc0b",
+		"_postman_id": "e07d7ca0-8f70-407b-ac98-391fe40825fd",
 		"name": "events-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -198,7 +198,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/v1/cards/new23",
+							"raw": "http://localhost:8000/api/v1/cards/6",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -208,14 +208,14 @@
 								"api",
 								"v1",
 								"cards",
-								"new23"
+								"6"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "https://mirek-mockapi.herokuapp.com/api/v1/content/main",
+					"name": "-- https://mirek-mockapi.herokuapp.com/api/v1/content/main",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -324,10 +324,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"new\",\n    \"text\": \"bla bla bla\"\n}"
+							"raw": "{\n\t\"name\": \"newmenu 3\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/v1/cards",
+							"raw": "http://localhost:8000/api/v1/menus",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -336,7 +336,7 @@
 							"path": [
 								"api",
 								"v1",
-								"cards"
+								"menus"
 							]
 						}
 					},
@@ -404,7 +404,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:8000/api/v1/menus/1",
+							"raw": "http://localhost:8000/api/v1/menus/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -414,7 +414,7 @@
 								"api",
 								"v1",
 								"menus",
-								"1"
+								"4"
 							]
 						}
 					},
