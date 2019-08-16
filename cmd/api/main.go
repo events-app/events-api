@@ -101,8 +101,8 @@ func main() {
 	log.Println("Listening on port", port)
 	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"*"},
-		// AllowedMethods: []string{"GET", "POST", "PATCH"},
-		// AllowedHeaders: []string{"Bearer", "Content-Type"}
+		AllowedMethods: []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Bearer", "Content-Type"},
 	})
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), c.Handler(r)); err != nil {
 		log.Printf("error: listing and serving: %s", err)
