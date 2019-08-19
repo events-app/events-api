@@ -55,7 +55,7 @@ func (m *Menus) AddMenu(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	me, err = menu.Add(m.DB, me.Name, me.CardID, time.Now())
 	if err != nil {
-		web.RespondWithError(w, http.StatusConflict, err.Error())
+		web.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	web.RespondWithJSON(w, http.StatusCreated, me)

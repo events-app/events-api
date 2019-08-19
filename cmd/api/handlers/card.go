@@ -54,7 +54,7 @@ func (c *Cards) AddCard(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ca, err = card.Add(c.DB, ca.Name, ca.Text, time.Now())
 	if err != nil {
-		web.RespondWithError(w, http.StatusConflict, err.Error())
+		web.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 	web.RespondWithJSON(w, http.StatusCreated, ca)
